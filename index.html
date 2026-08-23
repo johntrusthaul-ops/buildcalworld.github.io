@@ -1,4 +1,66 @@
-document.getElementById('unit-area').innerText = 'sq m';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint Calculator | BuildCal</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; padding: 20px; }
+        .calculator { max-width: 420px; margin: 30px auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; margin-top: 0; }
+        label { display: block; margin-top: 12px; font-weight: bold; color: #555; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 15px; }
+        button { width: 100%; margin-top: 20px; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <h2>Paint Calculator</h2>
+    
+    <label for="unit">Unit System:</label>
+    <select id="unit" onchange="toggleUnits()">
+        <option value="imperial">Imperial (Feet / Gallons)</option>
+        <option value="metric">Metric (Meters / Liters)</option>
+    </select>
+
+    <label id="lbl-length">Room Length (ft):</label>
+    <input type="number" id="length" value="12" step="any">
+    
+    <label id="lbl-width">Room Width (ft):</label>
+    <input type="number" id="width" value="10" step="any">
+    
+    <label id="lbl-height">Wall Height (ft):</label>
+    <input type="number" id="height" value="8" step="any">
+    
+    <label>Doors Count:</label>
+    <input type="number" id="doors" value="1" min="0">
+    
+    <label>Windows Count:</label>
+    <input type="number" id="windows" value="2" min="0">
+    
+    <button onclick="calculatePaint()">Calculate Paint Needed</button>
+    
+    <div class="result">
+        <h3>Results</h3>
+        <p>Total Surface Area: <strong id="area">0</strong> <span id="unit-area">sq ft</span></p>
+        <p>Paint Needed: <strong id="paint">0</strong> <span id="unit-paint">gallons</span></p>
+    </div>
+</div>
+
+<script>
+function toggleUnits() {
+    let system = document.getElementById('unit').value;
+    if (system === 'metric') {
+        document.getElementById('lbl-length').innerText = 'Room Length (m):';
+        document.getElementById('lbl-width').innerText = 'Room Width (m):';
+        document.getElementById('lbl-height').innerText = 'Wall Height (m):';
+        document.getElementById('length').value = 4;
+        document.getElementById('width').value = 3;
+        document.getElementById('height').value = 2.5;
+        document.getElementById('unit-area').innerText = 'sq m';
         document.getElementById('unit-paint').innerText = 'liters';
     } else {
         document.getElementById('lbl-length').innerText = 'Room Length (ft):';
@@ -21,24 +83,3 @@ function calculatePaint() {
     let doors = parseFloat(document.getElementById('doors').value) || 0;
     let windows = parseFloat(document.getElementById('windows').value) || 0;
 
-    let wallArea = 2 * (l + w) * h;
-    
-    // Deductions & coverage rates based on unit choice
-    let doorArea = system === 'metric' ? 2.0 : 21;    // 2 sq meters vs 21 sq ft per door
-    let windowArea = system === 'metric' ? 1.4 : 15;  // 1.4 sq meters vs 15 sq ft per window
-    let coverageRate = system === 'metric' ? 10 : 350; // 10 sq m per liter vs 350 sq ft per gallon
-
-    let deductions = (doors * doorArea) + (windows * windowArea);
-    let netArea = Math.max(0, wallArea - deductions);
-    let totalPaint = (netArea / coverageRate).toFixed(2);
-
-    document.getElementById('area').innerText = netArea.toFixed(2);
-    document.getElementById('paint').innerText = totalPaint;
-}
-
-// Initial calculation on page load
-calculatePaint();
-</script>
-
-</body>
-</html>
