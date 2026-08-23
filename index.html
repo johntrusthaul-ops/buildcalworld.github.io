@@ -6,33 +6,41 @@
     <title>Free Paint Calculator | Calculate Liters & Gallons</title>
     <meta name="description" content="Calculate exactly how much paint you need in liters or gallons. Easy room paint estimator with custom door and window dimensions.">
     
+    <!-- Google Search Console Verification Tag -->
     <meta name="google-site-verification" content="kbqg5oWZMQwaR4DmUZCHyTss0k1o_jzZXAvo_xg1s08" />
+
+    <!-- GOOGLE ADSENSE CODE PLACEHOLDER (Replace ca-pub-XXXXXXXXXXXXXXXX with your real AdSense ID when approved) -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
 
     <style>
         * { box-sizing: border-box; }
         body { 
             font-family: Arial, sans-serif; 
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+        .header-bg {
             background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
                         url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1920&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
+            padding: 40px 20px;
             display: flex;
-            align-items: center;
             justify-content: center;
         }
         .box { 
             width: 100%;
-            max-width: 420px; 
-            background: rgba(255, 255, 255, 0.95); 
+            max-width: 440px; 
+            background: rgba(255, 255, 255, 0.98); 
             padding: 25px; 
             border-radius: 10px; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4); 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3); 
         }
-        h2 { text-align: center; color: #222; margin-top: 0; font-size: 24px; }
+        h1, h2 { text-align: center; color: #222; margin-top: 0; }
+        h1 { font-size: 24px; }
         label { font-weight: bold; display: block; margin-top: 12px; color: #444; font-size: 14px; }
         input, select { 
             width: 100%; 
@@ -64,52 +72,106 @@
             border-left: 5px solid #ff9800; 
         }
         .res p { margin: 8px 0; color: #333; }
-        .tip { font-size: 13px; color: #666; margin-top: 10px; line-height: 1.4; display: block; }
+        .tip { font-size: 13px; color: #666; margin-top: 10px; display: block; }
+        
+        .content-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .content-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .content-card h3 { color: #ff9800; margin-top: 0; }
+        footer {
+            background: #222;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+        }
+        footer a { color: #ff9800; text-decoration: none; margin: 0 10px; }
+        footer a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <h2>Paint Calculator</h2>
+<div class="header-bg">
+    <div class="box">
+        <h1>Paint Calculator</h1>
 
-    <label>Unit System</label>
-    <select id="unit" onchange="swapUnits()">
-        <option value="imperial">Imperial (Feet / Gallons)</option>
-        <option value="metric">Metric (Meters / Liters)</option>
-    </select>
+        <label>Unit System</label>
+        <select id="unit" onchange="swapUnits()">
+            <option value="imperial">Imperial (Feet / Gallons)</option>
+            <option value="metric">Metric (Meters / Liters)</option>
+        </select>
 
-    <label>Room Length (<span class="u">ft</span>)</label>
-    <input type="number" id="length" value="12" step="any">
+        <label>Room Length (<span class="u">ft</span>)</label>
+        <input type="number" id="length" value="12" step="any">
 
-    <label>Room Width (<span class="u">ft</span>)</label>
-    <input type="number" id="width" value="10" step="any">
+        <label>Room Width (<span class="u">ft</span>)</label>
+        <input type="number" id="width" value="10" step="any">
 
-    <label>Wall Height (<span class="u">ft</span>)</label>
-    <input type="number" id="height" value="8" step="any">
+        <label>Wall Height (<span class="u">ft</span>)</label>
+        <input type="number" id="height" value="8" step="any">
 
-    <label>Doors Count</label>
-    <input type="number" id="doors" value="1" min="0">
+        <label>Doors Count</label>
+        <input type="number" id="doors" value="1" min="0">
 
-    <label>Door Width (<span class="u">ft</span>)</label>
-    <input type="number" id="door-w" value="3" step="any">
+        <label>Door Width (<span class="u">ft</span>)</label>
+        <input type="number" id="door-w" value="3" step="any">
 
-    <label>Door Height (<span class="u">ft</span>)</label>
-    <input type="number" id="door-h" value="7" step="any">
+        <label>Door Height (<span class="u">ft</span>)</label>
+        <input type="number" id="door-h" value="7" step="any">
 
-    <label>Windows Count</label>
-    <input type="number" id="windows" value="2" min="0">
+        <label>Windows Count</label>
+        <input type="number" id="windows" value="2" min="0">
 
-    <label>Window Width (<span class="u">ft</span>)</label>
-    <input type="number" id="win-w" value="3" step="any">
+        <label>Window Width (<span class="u">ft</span>)</label>
+        <input type="number" id="win-w" value="3" step="any">
 
-    <label>Window Height (<span class="u">ft</span>)</label>
-    <input type="number" id="win-h" value="5" step="any">
-  <div class="res">
-        <p>Total Area: <strong id="out-area">0</strong> <span id="u-area">sq ft</span></p>
-        <p>Paint Needed: <strong id="out-paint">0</strong> <span id="u-paint">gallons</span> <span style="color: #666; font-size: 13px;">(1 coat)</span></p>
-        <span class="tip">💡 <em>Tip: Standard paint cans usually come in 1L, 2.5L, and 5L sizes (or 1-gallon buckets). Double the paint calculated for 2 coats and round up to the nearest full can size.</em></span>
+        <label>Window Height (<span class="u">ft</span>)</label>
+        <input type="number" id="win-h" value="5" step="any">
+
+        <button type="button" onclick="calc()">Calculate Paint Needed</button>
+
+        <div class="res">
+            <p>Total Area: <strong id="out-area">0</strong> <span id="u-area">sq ft</span></p>
+            <p>Paint Needed: <strong id="out-paint">0</strong> <span id="u-paint">gallons</span> <span style="color: #666; font-size: 13px;">(1 coat)</span></p>
+            <span class="tip">💡 <em>Tip: Double the calculated total for 2 coats and round up to the nearest full can size.</em></span>
+        </div>
     </div>
 </div>
+
+<div class="content-container">
+    <div class="content-card">
+        <h3>How to Calculate Paint Coverage Accurately</h3>
+        <p>Calculating how much paint you need requires finding the net surface area of your walls. First, multiply the room's total perimeter by the wall height to find the total wall space. Subtract the square footage of any doors and windows to get your net painting area. On average, one gallon of interior paint covers 350 square feet, while one liter covers approximately 10 square meters.</p>
+    </div>
+
+    <div class="content-card">
+        <h3>1 Coat vs. 2 Coats: How Much Paint Do You Need?</h3>
+        <p>While standard calculations display coverage for a single coat, most interior and exterior painting projects require at least two coats for full opacity, durability, and smooth finish. If you are painting over a dark color with a lighter shade, apply a primer first or plan for a third coat to achieve even color representation.</p>
+    </div>
+
+    <div class="content-card">
+        <h3>Wall Surface Texture and Paint Absorption</h3>
+        <p>The material of your wall heavily influences total coverage. Smooth, pre-primed drywall absorbs paint evenly and yields maximum coverage. Unprimed drywall, textured stucco, or brick absorbs significantly more liquid, requiring 10% to 25% more paint than calculated standard surface estimates.</p>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2026 BuildCal World. All rights reserved.</p>
+    <p>
+        <a href="#calculator">Calculator</a> | 
+        <a href="javascript:alert('Privacy Policy: We do not collect personal user data.')">Privacy Policy</a> | 
+        <a href="javascript:alert('Terms of Service: This calculator provides estimations only.')">Terms of Service</a>
+    </p>
+</footer>
 
 <script>
 function swapUnits() {
@@ -173,5 +235,3 @@ function calc() {
 
 </body>
 </html>
-
-    <button type="button" onclick="calc()">Calculate Paint Needed</button>
