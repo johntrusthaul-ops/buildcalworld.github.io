@@ -1,48 +1,65 @@
-<div class="grid-2">
-        <div class="form-group">
-          <label for="doors">Doors Count</label>
-          <input type="number" id="doors" min="0" value="1">
-        </div>
-        <div class="form-group">
-          <label for="windows">Windows Count</label>
-          <input type="number" id="windows" min="0" value="2">
-        </div>
-      </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paint Calculator | BuildCal</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f4f6f8; padding: 20px; }
+.calculator { max-width: 400px; margin: 40px auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+h2 { text-align: center; color: #333; margin-top: 0; }
+label { display: block; margin-top: 12px; font-weight: bold; color: #555; }
+input { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+button { width: 100%; margin-top: 20px; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+button:hover { background: #0056b3; }
+.result { margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 4px; }
+</style>
+</head>
+<body>
 
-      <button class="submit-btn" onclick="calculatePaint()">Calculate Paint Needed</button>
+<div class="calculator">
+<h2>Paint Calculator</h2>
+<label>Room Length (ft):</label>
+<input type="number" id="length" value="12">
 
-      <div class="results" id="paintResults">
-        <h3>Results</h3>
-        <p>Total Surface Area: <strong id="totalArea">0</strong> sq ft</p>
-        <p>Paint Needed: <strong id="gallonsNeeded">0</strong> gallons</p>
-      </div>
-    </div>
+<label>Room Width (ft):</label>
+<input type="number" id="width" value="10">
 
-  </div>
+<label>Wall Height (ft):</label>
+<input type="number" id="height" value="8">
 
-  <script>
-    function calculatePaint() {
-      const length = parseFloat(document.getElementById('length').value) || 0;
-      const width = parseFloat(document.getElementById('width').value) || 0;
-      const height = parseFloat(document.getElementById('height').value) || 0;
-      const coats = parseInt(document.getElementById('coats').value) || 2;
-      const doors = parseInt(document.getElementById('doors').value) || 0;
-      const windows = parseInt(document.getElementById('windows').value) || 0;
+<label>Doors Count:</label>
+<input type="number" id="doors" value="1">
 
-      const SQFT_PER_GALLON = 350; 
-      const perimeter = (length + width) * 2;
-      const grossArea = perimeter * height;
-      const deductions = (doors * 21) + (windows * 15);
-      const netArea = Math.max(0, grossArea - deductions);
-      
-      const totalAreaToCover = netArea * coats;
-      const gallonsNeeded = Math.ceil((totalAreaToCover / SQFT_PER_GALLON) * 10) / 10;
+<label>Windows Count:</label>
+<input type="number" id="windows" value="2">
 
-      document.getElementById('totalArea').textContent = netArea.toLocaleString();
-      document.getElementById('gallonsNeeded').textContent = gallonsNeeded;
-      document.getElementById('paintResults').style.display = 'block';
-    }
-  </script>
+<button onclick="calculatePaint()">Calculate Paint Needed</button>
+
+<div class="result">
+<h3>Results</h3>
+<p>Total Surface Area: <strong id="area">0</strong> sq ft</p>
+<p>Paint Needed: <strong id="gallons">0</strong> gallons</p>
+</div>
+</div>
+
+<script>
+function calculatePaint() {
+let l = parseFloat(document.getElementById('length').value) || 0;
+let w = parseFloat(document.getElementById('width').value) || 0;
+let h = parseFloat(document.getElementById('height').value) || 0;
+let doors = parseFloat(document.getElementById('doors').value) || 0;
+let windows = parseFloat(document.getElementById('windows').value) || 0;
+
+let wallArea = 2 * (l + w) * h;
+let deductions = (doors * 21) + (windows * 15);
+let netArea = Math.max(0, wallArea - deductions);
+let gallons = (netArea / 350).toFixed(2);
+
+document.getElementById('area').innerText = netArea;
+document.getElementById('gallons').innerText = gallons;
+}
+</script>
 
 </body>
 </html>
