@@ -1,3 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paint Calculator | BuildCal</title>
+<style>
+body { 
+font-family: Arial, sans-serif; 
+background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1920&auto=format&fit=crop');
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+margin: 0;
+padding: 20px;
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.calculator { 
+width: 100%;
+max-width: 420px; 
+background: rgba(255, 255, 255, 0.95); 
+padding: 25px; 
+border-radius: 10px; 
+box-shadow: 0 8px 24px rgba(0,0,0,0.4); 
+}
+h2 { text-align: center; color: #222; margin-top: 0; font-size: 24px; }
+label { display: block; margin-top: 12px; font-weight: bold; color: #444; }
+input, select { 
+width: 100%; 
+padding: 10px; 
+margin-top: 5px; 
+box-sizing: border-box; 
+border: 1px solid #ccc; 
+border-radius: 4px; 
+font-size: 15px; 
+}
+button { 
+width: 100%; 
+margin-top: 20px; 
+padding: 12px; 
+background: #ff9800; 
+color: white; 
+border: none; 
+border-radius: 4px; 
+font-size: 16px; 
+font-weight: bold; 
+cursor: pointer; 
+}
+button:hover { background: #e68a00; }
+.result { margin-top: 20px; padding: 15px; background: #f1f3f5; border-radius: 4px; border-left: 5px solid #ff9800; }
+.result h3 { margin-top: 0; color: #333; }
+.tip { font-size: 13px; color: #666; margin-top: 10px; margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<div class="calculator">
+<h2>Paint Calculator</h2>
+
+<label for="unit">Unit System:</label>
+<select id="unit" onchange="updateUnitSystem()">
+<option value="imperial">Imperial (Feet / Gallons)</option>
+<option value="metric">Metric (Meters / Liters)</option>
+</select>
+
+<label>Room Length (<span class="unit-dim">ft</span>):</label>
+<input type="number" id="length" value="12" step="any">
+
+<label>Room Width (<span class="unit-dim">ft</span>):</label>
+<input type="number" id="width" value="10" step="any">
+
+<label>Wall Height (<span class="unit-dim">ft</span>):</label>
+<input type="number" id="height" value="8" step="any">
+
+<label>Doors Count:</label>
+<input type="number" id="doors" value="1" min="0">
+
+<label>Windows Count:</label>
+<input type="number" id="windows" value="2" min="0">
+
+<button type="button" onclick="calculatePaint()">Calculate Paint Needed</button>
+
+<div class="result">
+<h3>Results</h3>
+<p>Total Surface Area: <strong id="area">0</strong> <span id="unit-area">sq ft</span></p>
+<p>Paint Needed: <strong id="paint">0</strong> <span id="unit-paint">gallons</span></p>
+<p class="tip">💡 <em>Tip: Standard paint cans usually come in 1L, 2.5L, and 5L sizes (or 1-gallon buckets). Round up to the nearest can size to ensure full coverage.</em></p>
+</div>
+</div>
+
+<script>
+function updateUnitSystem() {
+var system = document.getElementById('unit').value;
+var dimLabels = document.querySelectorAll('.unit-dim');
+
+if (system === 'metric') {
+dimLabels.forEach(function(label) { label.innerText = 'm'; });
 document.getElementById('length').value = 4;
         document.getElementById('width').value = 3;
         document.getElementById('height').value = 2.5;
