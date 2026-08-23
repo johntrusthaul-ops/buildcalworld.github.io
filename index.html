@@ -1,84 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Paint Calculator | BuildCal</title>
-<style>
-body { font-family: Arial, sans-serif; background: #f4f6f8; padding: 20px; }
-.calculator { max-width: 420px; margin: 30px auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-h2 { text-align: center; color: #333; margin-top: 0; }
-label { display: block; margin-top: 12px; font-weight: bold; color: #555; }
-input, select { width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 15px; }
-button { width: 100%; margin-top: 20px; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; }
-button:hover { background: #0056b3; }
-.result { margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 4px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint Calculator | BuildCal</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+                        url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .calculator { 
+            width: 100%;
+            max-width: 420px; 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4); 
+        }
+        h2 { text-align: center; color: #222; margin-top: 0; font-size: 24px; }
+        label { display: block; margin-top: 12px; font-weight: bold; color: #444; }
+        input, select { 
+            width: 100%; 
+            padding: 10px; 
+            margin-top: 5px; 
+            box-sizing: border-box; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-size: 15px; 
+        }
+        button { 
+            width: 100%; 
+            margin-top: 20px; 
+            padding: 12px; 
+            background: #ff9800; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        button:hover { background: #e68a00; }
+        .result { margin-top: 20px; padding: 15px; background: #f1f3f5; border-radius: 4px; border-left: 5px solid #ff9800; }
+        .result h3 { margin-top: 0; color: #333; }
+    </style>
 </head>
 <body>
 
 <div class="calculator">
-<h2>Paint Calculator</h2>
+    <h2>Paint Calculator</h2>
+    
+    <label for="unit">Unit System:</label>
+    <select id="unit" onchange="handleUnitChange()">
+        <option value="imperial">Imperial (Feet / Gallons)</option>
+        <option value="metric">Metric (Meters / Liters)</option>
+    </select>
 
-<label for="unit">Unit System:</label>
-<select id="unit" onchange="toggleUnits()">
-<option value="imperial">Imperial (Feet / Gallons)</option>
-<option value="metric">Metric (Meters / Liters)</option>
-</select>
-
-<label id="lbl-length">Room Length (ft):</label>
-<input type="number" id="length" value="12" step="any">
-
-<label id="lbl-width">Room Width (ft):</label>
-<input type="number" id="width" value="10" step="any">
-
-<label id="lbl-height">Wall Height (ft):</label>
-<input type="number" id="height" value="8" step="any">
-
-<label>Doors Count:</label>
-<input type="number" id="doors" value="1" min="0">
-
-<label>Windows Count:</label>
-<input type="number" id="windows" value="2" min="0">
-
-<button onclick="calculatePaint()">Calculate Paint Needed</button>
-
-<div class="result">
-<h3>Results</h3>
-<p>Total Surface Area: <strong id="area">0</strong> <span id="unit-area">sq ft</span></p>
-<p>Paint Needed: <strong id="paint">0</strong> <span id="unit-paint">gallons</span></p>
-</div>
+    <label id="lbl-length">Room Length (<span class="u-label">ft</span>):</label>
+    <input type="number" id="length" value="12" step="any" oninput="calculate()">
+    
+    <label id="lbl-width">Room Width (<span class="u-label">ft</span>):</label>
+    <input type="number" id="width" value="10" step="any" oninput="calculate()">
+    
+    <label id="lbl-height">Wall Height (<span class="u-label">ft</span>):</label>
+    <input type="number" id="height" value="8" step="any" oninput="calculate()">
+    
+    <label>Doors Count:</label>
+    <input type="number" id="doors" value="1" min="0" oninput="calculate()">
+    
+    <label>Windows Count:</label>
+    <input type="number" id="windows" value="2" min="0" oninput="calculate()">
+    
+    <button type="button" onclick="calculate()">Calculate Paint Needed</button>
+    
+    <div class="result">
+        <h3>Results</h3>
+        <p>Total Surface Area: <strong id="area">0</strong> <span id="unit-area">sq ft</span></p>
+        <p>Paint Needed: <strong id="paint">0</strong> <span id="unit-paint">gallons</span></p>
+    </div>
 </div>
 
 <script>
-function toggleUnits() {
-let system = document.getElementById('unit').value;
-if (system === 'metric') {
-document.getElementById('lbl-length').innerText = 'Room Length (m):';
-document.getElementById('lbl-width').innerText = 'Room Width (m):';
-document.getElementById('lbl-height').innerText = 'Wall Height (m):';
-document.getElementById('length').value = 4;
-document.getElementById('width').value = 3;
-document.getElementById('height').value = 2.5;
-document.getElementById('unit-area').innerText = 'sq m';
-document.getElementById('unit-paint').innerText = 'liters';
-} else {
-document.getElementById('lbl-length').innerText = 'Room Length (ft):';
-document.getElementById('lbl-width').innerText = 'Room Width (ft):';
-document.getElementById('lbl-height').innerText = 'Wall Height (ft):';
-document.getElementById('length').value = 12;
-document.getElementById('width').value = 10;
-document.getElementById('height').value = 8;
-document.getElementById('unit-area').innerText = 'sq ft';
-document.getElementById('unit-paint').innerText = 'gallons';
-}
-calculatePaint();
+function handleUnitChange() {
+    const system = document.getElementById('unit').value;
+    const labels = document.querySelectorAll('.u-label');
+    
+    if (system === 'metric') {
+        labels.forEach(l => l.innerText = 'm');
+        document.getElementById('length').value = 4;
+        document.getElementById('width').value = 3;
+        document.getElementById('height').value = 2
+       document.getElementById('unit-area').innerText = 'sq m';
+        document.getElementById('unit-paint').innerText = 'liters';
+    } else {
+        labels.forEach(l => l.innerText = 'ft');
+        document.getElementById('length').value = 12;
+        document.getElementById('width').value = 10;
+        document.getElementById('height').value = 8;
+        document.getElementById('unit-area').innerText = 'sq ft';
+        document.getElementById('unit-paint').innerText = 'gallons';
+    }
+    calculate();
 }
 
-function calculatePaint() {
-let system = document.getElementById('unit').value;
-let l = parseFloat(document.getElementById('length').value) || 0;
-let w = parseFloat(document.getElementById('width').value) || 0;
-let h = parseFloat(document.getElementById('height').value) || 0;
-let doors = parseFloat(document.getElementById('doors').value) || 0;
-let windows = parseFloat(document.getElementById('windows').value) || 0;05:57
+function calculate() {
+    const system = document.getElementById('unit').value;
+    const l = parseFloat(document.getElementById('length').value) || 0;
+    const w = parseFloat(document.getElementById('width').value) || 0;
+    const h = parseFloat(document.getElementById('height').value) || 0;
+    const doors = parseFloat(document.getElementById('doors').value) || 0;
+    const windows = parseFloat(document.getElementById('windows').value) || 0;
+
+    const totalWallArea = 2 * (l + w) * h;
+    
+    // Constants based on unit choice
+    const doorSize = system === 'metric' ? 2.0 : 21;    
+    const windowSize = system === 'metric' ? 1.4 : 15;  
+    const coverage = system === 'metric' ? 10 : 350; 
+
+    const deductions = (doors * doorSize) + (windows * windowSize);
+    const netArea = Math.max(0, totalWallArea - deductions);
+    const paintNeeded = (netArea / coverage).toFixed(2);
+
+    document.getElementById('area').innerText = netArea.toFixed(2);
+    document.getElementById('paint').innerText = paintNeeded;
+}
+
+window.onload = calculate;
+</script>
+
+</body>
+</html>   
+          
+          
+          
+          
+          .5;
