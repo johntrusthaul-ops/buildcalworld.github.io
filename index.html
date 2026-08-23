@@ -1,0 +1,48 @@
+<div class="grid-2">
+        <div class="form-group">
+          <label for="doors">Doors Count</label>
+          <input type="number" id="doors" min="0" value="1">
+        </div>
+        <div class="form-group">
+          <label for="windows">Windows Count</label>
+          <input type="number" id="windows" min="0" value="2">
+        </div>
+      </div>
+
+      <button class="submit-btn" onclick="calculatePaint()">Calculate Paint Needed</button>
+
+      <div class="results" id="paintResults">
+        <h3>Results</h3>
+        <p>Total Surface Area: <strong id="totalArea">0</strong> sq ft</p>
+        <p>Paint Needed: <strong id="gallonsNeeded">0</strong> gallons</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function calculatePaint() {
+      const length = parseFloat(document.getElementById('length').value) || 0;
+      const width = parseFloat(document.getElementById('width').value) || 0;
+      const height = parseFloat(document.getElementById('height').value) || 0;
+      const coats = parseInt(document.getElementById('coats').value) || 2;
+      const doors = parseInt(document.getElementById('doors').value) || 0;
+      const windows = parseInt(document.getElementById('windows').value) || 0;
+
+      const SQFT_PER_GALLON = 350; 
+      const perimeter = (length + width) * 2;
+      const grossArea = perimeter * height;
+      const deductions = (doors * 21) + (windows * 15);
+      const netArea = Math.max(0, grossArea - deductions);
+      
+      const totalAreaToCover = netArea * coats;
+      const gallonsNeeded = Math.ceil((totalAreaToCover / SQFT_PER_GALLON) * 10) / 10;
+
+      document.getElementById('totalArea').textContent = netArea.toLocaleString();
+      document.getElementById('gallonsNeeded').textContent = gallonsNeeded;
+      document.getElementById('paintResults').style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
