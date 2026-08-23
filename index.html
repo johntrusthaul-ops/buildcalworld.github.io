@@ -1,38 +1,49 @@
-} else {
-        labels.forEach(l => l.innerText = 'ft');
-        document.getElementById('length').value = 12;
-        document.getElementById('width').value = 10;
-        document.getElementById('height').value = 8;
-        document.getElementById('unit-area').innerText = 'sq ft';
-        document.getElementById('unit-paint').innerText = 'gallons';
+document.getElementById('length').value = '4';
+        document.getElementById('width').value = '3';
+        document.getElementById('height').value = '2.5';
+        document.getElementById('res-unit-area').innerHTML = 'sq m';
+        document.getElementById('res-unit-paint').innerHTML = 'liters';
+    } else {
+        document.getElementById('unit-len').innerHTML = 'ft';
+        document.getElementById('unit-wid').innerHTML = 'ft';
+        document.getElementById('unit-hei').innerHTML = 'ft';
+        document.getElementById('length').value = '12';
+        document.getElementById('width').value = '10';
+        document.getElementById('height').value = '8';
+        document.getElementById('res-unit-area').innerHTML = 'sq ft';
+        document.getElementById('res-unit-paint').innerHTML = 'gallons';
     }
-    // Resets calculated results until user hits the button
-    document.getElementById('area').innerText = '0';
-    document.getElementById('paint').innerText = '0';
+    document.getElementById('res-area').innerHTML = '0';
+    document.getElementById('res-paint').innerHTML = '0';
 }
 
-function calculate() {
-    const system = document.getElementById('unit').value;
-    const l = parseFloat(document.getElementById('length').value) || 0;
-    const w = parseFloat(document.getElementById('width').value) || 0;
-    const h = parseFloat(document.getElementById('height').value) || 0;
-    const doors = parseFloat(document.getElementById('doors').value) || 0;
-    const windows = parseFloat(document.getElementById('windows').value) || 0;
+function runCalculation() {
+    var sys = document.getElementById('unit').value;
+    var l = parseFloat(document.getElementById('length').value) || 0;
+    var w = parseFloat(document.getElementById('width').value) || 0;
+    var h = parseFloat(document.getElementById('height').value) || 0;
+    var d = parseFloat(document.getElementById('doors').value) || 0;
+    var win = parseFloat(document.getElementById('windows').value) || 0;
 
-    const totalWallArea = 2 * (l + w) * h;
-    
-    const doorSize = system === 'metric' ? 2.0 : 21;    
-    const windowSize = system === 'metric' ? 1.4 : 15;  
-    const coverage = system === 'metric' ? 10 : 350; 
+    var grossArea = 2 * (l + w) * h;
+    var doorSq = (sys === 'metric') ? 2.0 : 21;
+    var windowSq = (sys === 'metric') ? 1.4 : 15;
+    var coverageRate = (sys === 'metric') ? 10 : 350;
 
-    const deductions = (doors * doorSize) + (windows * windowSize);
-    const netArea = Math.max(0, totalWallArea - deductions);
-    const paintNeeded = (netArea / coverage).toFixed(2);
+    var netArea = grossArea - ((d * doorSq) + (win * windowSq));
+    if (netArea < 0) netArea = 0;
 
-    document.getElementById('area').innerText = netArea.toFixed(2);
-    document.getElementById('paint').innerText = paintNeeded;
+    var paintVal = (netArea / coverageRate).toFixed(2);
+
+    document.getElementById('res-area').innerHTML = netArea.toFixed(2);
+    document.getElementById('res-paint').innerHTML = paintVal;
 }
 </script>
 
 </body>
 </html>
+            <p style="font-size: 13px; color: #666; margin-top: 8px;">
+    💡 <em>Tip: Standard paint cans usually come in 1L, 2.5L, and 5L sizes (or 1-gallon buckets). Round up to the nearest can size to ensure full coverage.</em>
+</p>
+            
+            
