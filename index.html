@@ -1,14 +1,72 @@
-<p class="tip">💡 <em>Tip: Standard paint cans usually come in 1L, 2.5L, and 5L sizes (or 1-gallon buckets). Double the paint calculated for 2 coats and round up to the nearest full can size.</em></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint Calculator</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
+        .box { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ccc; }
+        label { font-weight: bold; display: block; margin-top: 10px; }
+        input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; font-size: 16px; margin-top: 15px; cursor: pointer; }
+        .res { background: #e9ecef; padding: 10px; margin-top: 15px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Paint Calculator</h2>
+
+    <label>Unit System</label>
+    <select id="unit" onchange="swapUnits()">
+        <option value="imperial">Imperial (Feet / Gallons)</option>
+        <option value="metric">Metric (Meters / Liters)</option>
+    </select>
+
+    <label>Room Length (<span class="u">ft</span>)</label>
+    <input type="number" id="length" value="12">
+
+    <label>Room Width (<span class="u">ft</span>)</label>
+    <input type="number" id="width" value="10">
+
+    <label>Wall Height (<span class="u">ft</span>)</label>
+    <input type="number" id="height" value="8">
+
+    <label>Doors Count</label>
+    <input type="number" id="doors" value="1">
+
+    <label>Door Width (<span class="u">ft</span>)</label>
+    <input type="number" id="door-w" value="3">
+
+    <label>Door Height (<span class="u">ft</span>)</label>
+    <input type="number" id="door-h" value="7">
+
+    <label>Windows Count</label>
+    <input type="number" id="windows" value="2">
+
+    <label>Window Width (<span class="u">ft</span>)</label>
+    <input type="number" id="win-w" value="3">
+
+    <label>Window Height (<span class="u">ft</span>)</label>
+    <input type="number" id="win-h" value="5">
+
+    <button type="button" onclick="calc()">Calculate Paint Needed</button>
+
+    <div class="res">
+        <p>Total Area: <b id="out-area">0</b> <span id="u-area">sq ft</span></p>
+        <p>Paint Needed: <b id="out-paint">0</b> <span id="u-paint">gallons</span> (1 coat)</p>
+        <small style="color: #666;">💡 Note: For 2 coats, double the output. Round up to full store can sizes (1L, 2.5L, 5L / 1 Gal).</small>
     </div>
 </div>
 
 <script>
-function updateUnitSystem() {
-    var system = document.getElementById('unit').value;
-    var dimLabels = document.querySelectorAll('.unit-dim');
+function swapUnits() {
+    var sys = document.getElementById('unit').value;
+    var labels = document.querySelectorAll('.u');
     
-    if (system === 'metric') {
-        dimLabels.forEach(function(label) { label.innerText = 'm'; });
+    if (sys === 'metric') {
+        labels.forEach(el => el.innerText = 'm');
         document.getElementById('length').value = 4;
         document.getElementById('width').value = 3;
         document.getElementById('height').value = 2.5;
@@ -16,10 +74,10 @@ function updateUnitSystem() {
         document.getElementById('door-h').value = 2.1;
         document.getElementById('win-w').value = 1.0;
         document.getElementById('win-h').value = 1.4;
-        document.getElementById('unit-area').innerText = 'sq m';
-        document.getElementById('unit-paint').innerText = 'liters';
+        document.getElementById('u-area').innerText = 'sq m';
+        document.getElementById('u-paint').innerText = 'liters';
     } else {
-        dimLabels.forEach(function(label) { label.innerText = 'ft'; });
+        labels.forEach(el => el.innerText = 'ft');
         document.getElementById('length').value = 12;
         document.getElementById('width').value = 10;
         document.getElementById('height').value = 8;
@@ -27,40 +85,37 @@ function updateUnitSystem() {
         document.getElementById('door-h').value = 7;
         document.getElementById('win-w').value = 3;
         document.getElementById('win-h').value = 5;
-        document.getElementById('unit-area').innerText = 'sq ft';
-        document.getElementById('unit-paint').innerText = 'gallons';
+        document.getElementById('u-area').innerText = 'sq ft';
+        document.getElementById('u-paint').innerText = 'gallons';
     }
-    
-    document.getElementById('area').innerText = '0';
-    document.getElementById('paint').innerText = '0';
+    document.getElementById('out-area').innerText = '0';
+    document.getElementById('out-paint').innerText = '0';
 }
+    function calc() {
+var sys = document.getElementById('unit').value;
+var l = parseFloat(document.getElementById('length').value) || 0;
+var w = parseFloat(document.getElementById('width').value) || 0;
+var h = parseFloat(document.getElementById('height').value) || 0;
 
-function calculatePaint() {
-    var system = document.getElementById('unit').value;
-    var l = parseFloat(document.getElementById('length').value) || 0;
-    var w = parseFloat(document.getElementById('width').value) || 0;
-    var h = parseFloat(document.getElementById('height').value) || 0;
-    
-    var doors = parseFloat(document.getElementById('doors').value) || 0;
-    var dw = parseFloat(document.getElementById('door-w').value) || 0;
-    var dh = parseFloat(document.getElementById('door-h').value) || 0;
+var doors = parseFloat(document.getElementById('doors').value) || 0;
+var dw = parseFloat(document.getElementById('door-w').value) || 0;
+var dh = parseFloat(document.getElementById('door-h').value) || 0;
 
-    var windows = parseFloat(document.getElementById('windows').value) || 0;
-    var ww = parseFloat(document.getElementById('win-w').value) || 0;
-    var wh = parseFloat(document.getElementById('win-h').value) || 0;
+var wins = parseFloat(document.getElementById('windows').value) || 0;
+var ww = parseFloat(document.getElementById('win-w').value) || 0;
+var wh = parseFloat(document.getElementById('win-h').value) || 0;
 
-    var grossArea = 2 * (l + w) * h;
-    var coverageRate = (system === 'metric') ? 10 : 350;
+var grossArea = 2 * (l + w) * h;
+var coverage = (sys === 'metric') ? 10 : 350;
 
-    var doorArea = doors * (dw * dh);
-    var windowArea = windows * (ww * wh);
+var doorDeduction = doors * (dw * dh);
+var winDeduction = wins * (ww * wh);
 
-    var deductions = doorArea + windowArea;
-    var netArea = Math.max(0, grossArea - deductions);
-    var totalPaint = (netArea / coverageRate).toFixed(2);
+var netArea = Math.max(0, grossArea - (doorDeduction + winDeduction));
+var totalPaint = (netArea / coverage).toFixed(2);
 
-    document.getElementById('area').innerText = netArea.toFixed(2);
-    document.getElementById('paint').innerText = totalPaint;
+document.getElementById('out-area').innerText = netArea.toFixed(2);
+document.getElementById('out-paint').innerText = totalPaint;
 }
 </script>
 
