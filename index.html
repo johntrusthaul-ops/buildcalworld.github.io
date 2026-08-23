@@ -1,3 +1,4 @@
+YHG:
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,8 +88,8 @@ button:hover { background: #e68a00; }
 <div class="result">
 <h3>Results</h3>
 <p>Total Surface Area: <strong id="area">0</strong> <span id="unit-area">sq ft</span></p>
-<p>Paint Needed: <strong id="paint">0</strong> <span id="unit-paint">gallons</span></p>
-<p class="tip">💡 <em>Tip: Standard paint cans usually come in 1L, 2.5L, and 5L sizes (or 1-gallon buckets). Round up to the nearest can size to ensure full coverage.</em></p>
+<p>Paint Needed: <strong id="paint">0</strong> <span id="unit-paint">gallons</span> <span style="color: #666; font-size: 14px;">(1 coat)</span></p>
+<p class="tip">💡 <em>Tip: Standard paint cans usually come in 1L, 2.5L, and 5L sizes (or 1-gallon buckets). Round up to the nearest can size to ensure full coverage. Double the total if applying 2 coats.</em></p>
 </div>
 </div>
 
@@ -98,52 +99,47 @@ var system = document.getElementById('unit').value;
 var dimLabels = document.querySelectorAll('.unit-dim');
 
 if (system === 'metric') {
+
+YHG:
 dimLabels.forEach(function(label) { label.innerText = 'm'; });
 document.getElementById('length').value = 4;
-        document.getElementById('width').value = 3;
-        document.getElementById('height').value = 2.5;
-        document.getElementById('unit-area').innerText = 'sq m';
-        document.getElementById('unit-paint').innerText = 'liters';
-    } else {
-        dimLabels.forEach(function(label) { label.innerText = 'ft'; });
-        document.getElementById('length').value = 12;
-        document.getElementById('width').value = 10;
-        document.getElementById('height').value = 8;
-        document.getElementById('unit-area').innerText = 'sq ft';
-        document.getElementById('unit-paint').innerText = 'gallons';
-    }
-    
-    // Reset values until user clicks calculate button
-    document.getElementById('area').innerText = '0';
-    document.getElementById('paint').innerText = '0';
+document.getElementById('width').value = 3;
+document.getElementById('height').value = 2.5;
+document.getElementById('unit-area').innerText = 'sq m';
+document.getElementById('unit-paint').innerText = 'liters';
+} else {
+dimLabels.forEach(function(label) { label.innerText = 'ft'; });
+document.getElementById('length').value = 12;
+document.getElementById('width').value = 10;
+document.getElementById('height').value = 8;
+document.getElementById('unit-area').innerText = 'sq ft';
+document.getElementById('unit-paint').innerText = 'gallons';
+}
+
+document.getElementById('area').innerText = '0';
+document.getElementById('paint').innerText = '0';
 }
 
 function calculatePaint() {
-    var system = document.getElementById('unit').value;
-    var l = parseFloat(document.getElementById('length').value) || 0;
-    var w = parseFloat(document.getElementById('width').value) || 0;
-    var h = parseFloat(document.getElementById('height').value) || 0;
-    var doors = parseFloat(document.getElementById('doors').value) || 0;
-    var windows = parseFloat(document.getElementById('windows').value) || 0;
+var system = document.getElementById('unit').value;
+var l = parseFloat(document.getElementById('length').value) || 0;
+var w = parseFloat(document.getElementById('width').value) || 0;
+var h = parseFloat(document.getElementById('height').value) || 0;
+var doors = parseFloat(document.getElementById('doors').value) || 0;
+var windows = parseFloat(document.getElementById('windows').value) || 0;
 
-    var grossArea = 2 * (l + w) * h;
-    
-    var doorArea = (system === 'metric') ? 2.0 : 21;
-    var windowArea = (system === 'metric') ? 1.4 : 15;
-    var coverageRate = (system === 'metric') ? 10 : 350;
+var grossArea = 2 * (l + w) * h;
 
-    var deductions = (doors * doorArea) + (windows * windowArea);
-    var netArea = Math.max(0, grossArea - deductions);
-    var totalPaint = (netArea / coverageRate).toFixed(2);
+var doorArea = (system === 'metric') ? 2.0 : 21;
+var windowArea = (system === 'metric') ? 1.4 : 15;
+var coverageRate = (system === 'metric') ? 10 : 350;
 
-    document.getElementById('area').innerText = netArea.toFixed(2);
-    document.getElementById('paint').innerText = totalPaint;
-<label for="coats">Number of Coats:</label>
-<select id="coats">
-<option value="1">1 Coat</option>
-<option value="2" selected>2 Coats (Recommended)</option>
-<option value="3">3 Coats</option>
-</select>
+var deductions = (doors * doorArea) + (windows * windowArea);
+var netArea = Math.max(0, grossArea - deductions);
+var totalPaint = (netArea / coverageRate).toFixed(2);
+
+document.getElementById('area').innerText = netArea.toFixed(2);
+document.getElementById('paint').innerText = totalPaint;
 }
 </script>
 
