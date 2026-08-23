@@ -1,97 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paint Calculator</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
-        .box { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ccc; }
-        label { font-weight: bold; display: block; margin-top: 10px; }
-        input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; font-size: 16px; margin-top: 15px; cursor: pointer; }
-        .res { background: #e9ecef; padding: 10px; margin-top: 15px; border-radius: 4px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paint Calculator | BuildCal</title>
+<style>
+body { 
+font-family: Arial, sans-serif; 
+background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1920&auto=format&fit=crop');
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+margin: 0;
+padding: 20px;
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.box { 
+width: 100%;
+max-width: 420px; 
+background: rgba(255, 255, 255, 0.95); 
+padding: 25px; 
+border-radius: 10px; 
+box-shadow: 0 8px 24px rgba(0,0,0,0.4); 
+box-sizing: border-box;
+}
+h2 { text-align: center; color: #222; margin-top: 0; font-size: 24px; }
+label { font-weight: bold; display: block; margin-top: 12px; color: #444; font-size: 14px; }
+input, select { 
+width: 100%; 
+padding: 10px; 
+margin-top: 5px; 
+box-sizing: border-box; 
+border: 1px solid #ccc; 
+border-radius: 4px; 
+font-size: 14px; 
+}
+button { 
+width: 100%; 
+padding: 12px; 
+background: #ff9800; 
+color: white; 
+border: none; 
+font-size: 16px; 
+font-weight: bold; 
+margin-top: 20px; 
+cursor: pointer; 
+border-radius: 4px;
+transition: background 0.2s;
+}
+button:hover { background: #e68a00; }
+.res { 
+background: #f1f3f5; 
+padding: 15px; 
+margin-top: 20px; 
+border-radius: 4px; 
+border-left: 5px solid #ff9800; 
+}
+.res p { margin: 8px 0; color: #333; }
+.tip { font-size: 13px; color: #666; margin-top: 10px; line-height: 1.4; display: block; }
+</style>
 </head>
 <body>
 
 <div class="box">
-    <h2>Paint Calculator</h2>
+<h2>Paint Calculator</h2>
 
-    <label>Unit System</label>
-    <select id="unit" onchange="swapUnits()">
-        <option value="imperial">Imperial (Feet / Gallons)</option>
-        <option value="metric">Metric (Meters / Liters)</option>
-    </select>
+<label>Unit System</label>
+<select id="unit" onchange="swapUnits()">
+<option value="imperial">Imperial (Feet / Gallons)</option>
+<option value="metric">Metric (Meters / Liters)</option>
+</select>
 
-    <label>Room Length (<span class="u">ft</span>)</label>
-    <input type="number" id="length" value="12">
+<label>Room Length (<span class="u">ft</span>)</label>
+<input type="number" id="length" value="12" step="any">
 
-    <label>Room Width (<span class="u">ft</span>)</label>
-    <input type="number" id="width" value="10">
+<label>Room Width (<span class="u">ft</span>)</label>
+<input type="number" id="width" value="10" step="any">
 
-    <label>Wall Height (<span class="u">ft</span>)</label>
-    <input type="number" id="height" value="8">
+<label>Wall Height (<span class="u">ft</span>)</label>
+<input type="number" id="height" value="8" step="any">
 
-    <label>Doors Count</label>
-    <input type="number" id="doors" value="1">
+<label>Doors Count</label>
+<input type="number" id="doors" value="1" min="0">
 
-    <label>Door Width (<span class="u">ft</span>)</label>
-    <input type="number" id="door-w" value="3">
+<label>Door Width (<span class="u">ft</span>)</label>
+<input type="number" id="door-w" value="3" step="any">
 
-    <label>Door Height (<span class="u">ft</span>)</label>
-    <input type="number" id="door-h" value="7">
+<label>Door Height (<span class="u">ft</span>)</label>
+<input type="number" id="door-h" value="7" step="any">
 
-    <label>Windows Count</label>
-    <input type="number" id="windows" value="2">
+<label>Windows Count</label>
+<input type="number" id="windows" value="2" min="0">
 
-    <label>Window Width (<span class="u">ft</span>)</label>
-    <input type="number" id="win-w" value="3">
+<label>Window Width (<span class="u">ft</span>)</label>
+<input type="number" id="win-w" value="3" step="any">
 
-    <label>Window Height (<span class="u">ft</span>)</label>
-    <input type="number" id="win-h" value="5">
+<label>Window Height (<span class="u">ft</span>)</label>
+<input type="number" id="win-h" value="5" step="any">
 
-    <button type="button" onclick="calc()">Calculate Paint Needed</button>
+<button type="button" onclick="calc()">Calculate Paint Needed</button>
 
-    <div class="res">
-        <p>Total Area: <b id="out-area">0</b> <span id="u-area">sq ft</span></p>
-        <p>Paint Needed: <b id="out-paint">0</b> <span id="u-paint">gallons</span> (1 coat)</p>
-        <small style="color: #666;">💡 Note: For 2 coats, double the output. Round up to full store can sizes (1L, 2.5L, 5L / 1 Gal).</small>
-    </div>
+<div class="res">
+<p>Total Area: <strong id="out-area">0</strong> <span id="u-area">sq ft</span></p>
+<p>Paint Needed: <strong id="out-paint">0</strong> <span id="u-paint">gallons</span> <span style="color: #666; font-size: 13px;">(1 coat)</span></p>
+<span class="tip">💡 <em>Tip: Standard paint cans usually come in 1L, 2.5L, and 5L sizes (or 1-gallon buckets). Double the paint calculated for 2 coats and round up to the nearest full can size.</em></span>
+</div>
 </div>
 
 <script>
 function swapUnits() {
-    var sys = document.getElementById('unit').value;
-    var labels = document.querySelectorAll('.u');
-    
-    if (sys === 'metric') {
-        labels.forEach(el => el.innerText = 'm');
-        document.getElementById('length').value = 4;
-        document.getElementById('width').value = 3;
-        document.getElementById('height').value = 2.5;
-        document.getElementById('door-w').value = 0.9;
-        document.getElementById('door-h').value = 2.1;
-        document.getElementById('win-w').value = 1.0;
-        document.getElementById('win-h').value = 1.4;
-        document.getElementById('u-area').innerText = 'sq m';
-        document.getElementById('u-paint').innerText = 'liters';
-    } else {
-        labels.forEach(el => el.innerText = 'ft');
-        document.getElementById('length').value = 12;
-        document.getElementById('width').value = 10;
-        document.getElementById('height').value = 8;
-        document.getElementById('door-w').value = 3;
-        document.getElementById('door-h').value = 7;
-        document.getElementById('win-w').value = 3;
-        document.getElementById('win-h').value = 5;
-        document.getElementById('u-area').innerText = 'sq ft';
-        document.getElementById('u-paint').innerText = 'gallons';
-    }
-    document.getElementById('out-area').innerText = '0';
-    document.getElementById('out-paint').innerText = '0';
+var sys = document.getElementById('unit').value;
+var labels = document.querySelectorAll('.u');
+
+if (sys === 'metric') {
+labels.forEach(el => el.innerText = 'm');
+document.getElementById('length').value = 4;
+document.getElementById('width').value = 3;
+document.getElementById('height').value = 2.5;
+document.getElementById('door-w').value = 0.9;
+document.getElementById('door-h').value = 2.1;
+document.getElementById('win-w').value = 1.0;
+document.getElementById('win-h').value = 1.4;
+document.getElementById('u-area').innerText = 'sq m';
+document.getElementById('u-paint').innerText = 'liters';
+} else {
+labels.forEach(el => el.innerText = 'ft');
+document.getElementById('length').value = 12;
+document.getElementById('width').value = 10;
+document.getElementById('height').value = 8;
+document.getElementById('door-w').value = 3;
+document.getElementById('door-h').value = 7;
+document.getElementById('win-w').value = 3;
+document.getElementById('win-h').value = 5;
+document.getElementById('u-area').innerText = 'sq ft';
+document.getElementById('u-paint').innerText = 'gallons';
 }
-    function calc() {
+document.getElementById('out-area').innerText = '0';
+document.getElementById('out-paint').innerText = '0';
+}
+
+function calc() {
 var sys = document.getElementById('unit').value;
 var l = parseFloat(document.getElementById('length').value) || 0;
 var w = parseFloat(document.getElementById('width').value) || 0;
