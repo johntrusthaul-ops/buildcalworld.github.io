@@ -1,237 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Paint Calculator | Calculate Liters & Gallons</title>
-    <meta name="description" content="Calculate exactly how much paint you need in liters or gallons. Easy room paint estimator with custom door and window dimensions.">
-    
-    <!-- Google Search Console Verification Tag -->
-    <meta name="google-site-verification" content="kbqg5oWZMQwaR4DmUZCHyTss0k1o_jzZXAvo_xg1s08" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BuildCal - Paint Calculator</title>
+  <style>
+    :root {
+      --primary: #FF6600;
+      --primary-hover: #e55c00;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-color: #2b2d42;
+      --border-color: #e9ecef;
+    }
 
-    <!-- GOOGLE ADSENSE CODE PLACEHOLDER (Replace ca-pub-XXXXXXXXXXXXXXXX with your real AdSense ID when approved) -->
-    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; }
 
-    <style>
-        * { box-sizing: border-box; }
-        body { 
-            font-family: Arial, sans-serif; 
-            background: #f4f6f8;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            line-height: 1.6;
-        }
-        .header-bg {
-            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
-                        url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1920&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .box { 
-            width: 100%;
-            max-width: 440px; 
-            background: rgba(255, 255, 255, 0.98); 
-            padding: 25px; 
-            border-radius: 10px; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3); 
-        }
-        h1, h2 { text-align: center; color: #222; margin-top: 0; }
-        h1 { font-size: 24px; }
-        label { font-weight: bold; display: block; margin-top: 12px; color: #444; font-size: 14px; }
-        input, select { 
-            width: 100%; 
-            padding: 10px; 
-            margin-top: 5px; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            font-size: 14px; 
-        }
-        button { 
-            width: 100%; 
-            padding: 12px; 
-            background: #ff9800; 
-            color: white; 
-            border: none; 
-            font-size: 16px; 
-            font-weight: bold; 
-            margin-top: 20px; 
-            cursor: pointer; 
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-        button:hover { background: #e68a00; }
-        .res { 
-            background: #f1f3f5; 
-            padding: 15px; 
-            margin-top: 20px; 
-            border-radius: 4px; 
-            border-left: 5px solid #ff9800; 
-        }
-        .res p { margin: 8px 0; color: #333; }
-        .tip { font-size: 13px; color: #666; margin-top: 10px; display: block; }
-        
-        .content-container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        .content-card {
-            background: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .content-card h3 { color: #ff9800; margin-top: 0; }
-        footer {
-            background: #222;
-            color: #aaa;
-            text-align: center;
-            padding: 20px;
-            font-size: 13px;
-        }
-        footer a { color: #ff9800; text-decoration: none; margin: 0 10px; }
-        footer a:hover { text-decoration: underline; }
-    </style>
+    /* Header styling with your logo */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    header img {
+      height: 40px;
+      width: auto;
+    }
+    header span {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    /* Form Container */
+    .container {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 0.5rem; text-align: center; }
+    p.subtitle { text-align: center; color: #6c757d; font-size: 0.95rem; margin-bottom: 1.5rem; }
+
+    .form-group { margin-bottom: 1.2rem; }
+    label { display: block; font-weight: 600; margin-bottom: 0.4rem; font-size: 0.9rem; }
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    .row { display: flex; gap: 1rem; }
+    .row .form-group { flex: 1; }
+
+    button {
+      width: 100%;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.85rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    button:hover { background-color: var(--primary-hover); }
+
+    .result-box {
+      margin-top: 1.5rem;
+      padding: 1.2rem;
+      background: #fff8f5;
+      border: 1px solid #ffd8cc;
+      border-radius: 8px;
+      display: none;
+      text-align: center;
+    }
+    .result-box h3 { color: var(--primary); font-size: 1.8rem; margin-bottom: 0.2rem; }
+    .result-box p { font-size: 0.9rem; color: #555; }
+  </style>
 </head>
 <body>
 
-<div class="header-bg">
-    <div class="box">
-        <h1>Paint Calculator</h1>
+  <!-- Header with logo.png -->
+  <header>
+    <img src="logo.png" alt="BuildCal Logo">
+    <span>BuildCal</span>
+  </header>
 
-        <label>Unit System</label>
-        <select id="unit" onchange="swapUnits()">
-            <option value="imperial">Imperial (Feet / Gallons)</option>
-            <option value="metric">Metric (Meters / Liters)</option>
+  <!-- Main Calculator Content -->
+  <div class="container">
+    <div class="card">
+      <h1>Paint Coverage Calculator</h1>
+      <p class="subtitle">Accurate room estimation with doors & windows cutouts</p>
+
+      <div class="form-group">
+        <label for="unit">Unit System</label>
+        <select id="unit">
+          <option value="feet">Imperial (Feet / Gallons)</option>
+          <option value="meters">Metric (Meters / Liters)</option>
         </select>
+      </div>
 
-        <label>Room Length (<span class="u">ft</span>)</label>
-        <input type="number" id="length" value="12" step="any">
-
-        <label>Room Width (<span class="u">ft</span>)</label>
-        <input type="number" id="width" value="10" step="any">
-
-        <label>Wall Height (<span class="u">ft</span>)</label>
-        <input type="number" id="height" value="8" step="any">
-
-        <label>Doors Count</label>
-        <input type="number" id="doors" value="1" min="0">
-
-        <label>Door Width (<span class="u">ft</span>)</label>
-        <input type="number" id="door-w" value="3" step="any">
-
-        <label>Door Height (<span class="u">ft</span>)</label>
-        <input type="number" id="door-h" value="7" step="any">
-
-        <label>Windows Count</label>
-        <input type="number" id="windows" value="2" min="0">
-
-        <label>Window Width (<span class="u">ft</span>)</label>
-        <input type="number" id="win-w" value="3" step="any">
-
-        <label>Window Height (<span class="u">ft</span>)</label>
-        <input type="number" id="win-h" value="5" step="any">
-
-        <button type="button" onclick="calc()">Calculate Paint Needed</button>
-
-        <div class="res">
-            <p>Total Area: <strong id="out-area">0</strong> <span id="u-area">sq ft</span></p>
-            <p>Paint Needed: <strong id="out-paint">0</strong> <span id="u-paint">gallons</span> <span style="color: #666; font-size: 13px;">(1 coat)</span></p>
-            <span class="tip">💡 <em>Tip: Double the calculated total for 2 coats and round up to the nearest full can size.</em></span>
+      <div class="row">
+        <div class="form-group">
+          <label for="length">Room Length</label>
+          <input type="number" id="length" placeholder="e.g. 12" min="0" step="any">
         </div>
+        <div class="form-group">
+          <label for="width">Room Width</label>
+          <input type="number" id="width" placeholder="e.g. 10" min="0" step="any">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="height">Wall Height</label>
+          <input type="number" id="height" placeholder="e.g. 8" min="0" step="any">
+        </div>
+        <div class="form-group">
+          <label for="coats">Coats of Paint</label>
+          <input type="number" id="coats" value="2" min="1">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="doors">Number of Doors</label>
+          <input type="number" id="doors" value="1" min="0">
+        </div>
+        <div class="form-group">
+          <label for="windows">Number of Windows</label>
+          <input type="number" id="windows" value="2" min="0">
+        </div>
+      </div>
+
+      <button onclick="calculatePaint()">Calculate Paint Needed</button>
+
+      <div id="result" class="result-box">
+        <h3 id="paintAmount">0 Gallons</h3>
+        <p id="paintDetails">Total paintable wall area calculated.</p>
+      </div>
     </div>
-</div>
+  </div>
 
-<div class="content-container">
-    <div class="content-card">
-        <h3>How to Calculate Paint Coverage Accurately</h3>
-        <p>Calculating how much paint you need requires finding the net surface area of your walls. First, multiply the room's total perimeter by the wall height to find the total wall space. Subtract the square footage of any doors and windows to get your net painting area. On average, one gallon of interior paint covers 350 square feet, while one liter covers approximately 10 square meters.</p>
-    </div>
+  <script>
+    function calculatePaint() {
+      const unit = document.getElementById('unit').value;
+      const length = parseFloat(document.getElementById('length').value) || 0;
+      const width = parseFloat(document.getElementById('width').value) || 0;
+      const height = parseFloat(document.getElementById('height').value) || 0;
+      const coats = parseInt(document.getElementById('coats').value) || 2;
+      const doors = parseInt(document.getElementById('doors').value) || 0;
+      const windows = parseInt(document.getElementById('windows').value) || 0;
 
-    <div class="content-card">
-        <h3>1 Coat vs. 2 Coats: How Much Paint Do You Need?</h3>
-        <p>While standard calculations display coverage for a single coat, most interior and exterior painting projects require at least two coats for full opacity, durability, and smooth finish. If you are painting over a dark color with a lighter shade, apply a primer first or plan for a third coat to achieve even color representation.</p>
-    </div>
+      if (!length || !width || !height) {
+        alert("Please enter valid length, width, and height.");
+        return;
+      }
 
-    <div class="content-card">
-        <h3>Wall Surface Texture and Paint Absorption</h3>
-        <p>The material of your wall heavily influences total coverage. Smooth, pre-primed drywall absorbs paint evenly and yields maximum coverage. Unprimed drywall, textured stucco, or brick absorbs significantly more liquid, requiring 10% to 25% more paint than calculated standard surface estimates.</p>
-    </div>
-</div>
+      const perimeter = 2 * (length + width);
+      let grossArea = perimeter * height;
 
-<footer>
-    <p>&copy; 2026 BuildCal World. All rights reserved.</p>
-    <p>
-        <a href="#calculator">Calculator</a> | 
-        <a href="javascript:alert('Privacy Policy: We do not collect personal user data.')">Privacy Policy</a> | 
-        <a href="javascript:alert('Terms of Service: This calculator provides estimations only.')">Terms of Service</a>
-    </p>
-</footer>
+      let doorArea = unit === 'feet' ? 21 : 2;
+      let windowArea = unit === 'feet' ? 15 : 1.4;
 
-<script>
-function swapUnits() {
-    var sys = document.getElementById('unit').value;
-    var labels = document.querySelectorAll('.u');
-    
-    if (sys === 'metric') {
-        labels.forEach(el => el.innerText = 'm');
-        document.getElementById('length').value = 4;
-        document.getElementById('width').value = 3;
-        document.getElementById('height').value = 2.5;
-        document.getElementById('door-w').value = 0.9;
-        document.getElementById('door-h').value = 2.1;
-        document.getElementById('win-w').value = 1.0;
-        document.getElementById('win-h').value = 1.4;
-        document.getElementById('u-area').innerText = 'sq m';
-        document.getElementById('u-paint').innerText = 'liters';
-    } else {
-        labels.forEach(el => el.innerText = 'ft');
-        document.getElementById('length').value = 12;
-        document.getElementById('width').value = 10;
-        document.getElementById('height').value = 8;
-        document.getElementById('door-w').value = 3;
-        document.getElementById('door-h').value = 7;
-        document.getElementById('win-w').value = 3;
-        document.getElementById('win-h').value = 5;
-        document.getElementById('u-area').innerText = 'sq ft';
-        document.getElementById('u-paint').innerText = 'gallons';
+      let netArea = grossArea - (doors * doorArea) - (windows * windowArea);
+      if (netArea < 0) netArea = 0;
+
+      let totalCoverageNeeded = netArea * coats;
+
+      let paintNeeded = 0;
+      let unitLabel = "";
+
+      if (unit === 'feet') {
+        paintNeeded = (totalCoverageNeeded / 350).toFixed(2);
+        unitLabel = "Gallons";
+      } else {
+        paintNeeded = (totalCoverageNeeded / 10).toFixed(2);
+        unitLabel = "Liters";
+      }
+
+      const resultBox = document.getElementById('result');
+      document.getElementById('paintAmount').innerText = `${paintNeeded} ${unitLabel}`;
+      document.getElementById('paintDetails').innerText = `Covers ${Math.round(totalCoverageNeeded)} ${unit === 'feet' ? 'sq ft' : 'sq m'} total wall area (${coats} coat${coats > 1 ? 's' : ''}).`;
+      
+      resultBox.style.display = 'block';
     }
-    document.getElementById('out-area').innerText = '0';
-    document.getElementById('out-paint').innerText = '0';
-}
-
-function calc() {
-    var sys = document.getElementById('unit').value;
-    var l = parseFloat(document.getElementById('length').value) || 0;
-    var w = parseFloat(document.getElementById('width').value) || 0;
-    var h = parseFloat(document.getElementById('height').value) || 0;
-    
-    var doors = parseFloat(document.getElementById('doors').value) || 0;
-    var dw = parseFloat(document.getElementById('door-w').value) || 0;
-    var dh = parseFloat(document.getElementById('door-h').value) || 0;
-
-    var wins = parseFloat(document.getElementById('windows').value) || 0;
-    var ww = parseFloat(document.getElementById('win-w').value) || 0;
-    var wh = parseFloat(document.getElementById('win-h').value) || 0;
-
-    var grossArea = 2 * (l + w) * h;
-    var coverage = (sys === 'metric') ? 10 : 350;
-
-    var doorDeduction = doors * (dw * dh);
-    var winDeduction = wins * (ww * wh);
-
-    var netArea = Math.max(0, grossArea - (doorDeduction + winDeduction));
-    var totalPaint = (netArea / coverage).toFixed(2);
-
-    document.getElementById('out-area').innerText = netArea.toFixed(2);
-    document.getElementById('out-paint').innerText = totalPaint;
-}
-</script>
-
+  </script>
 </body>
 </html>
