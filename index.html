@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BuildCal - Paint Calculator</title>
+  <title>BuildCal - Simple & Accurate Paint Estimator</title>
   <style>
     :root {
       --primary: #FF6600;
@@ -17,7 +17,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; }
 
-    /* Header styling with your logo */
+    /* Header */
     header {
       background: var(--card-bg);
       border-bottom: 1px solid var(--border-color);
@@ -29,15 +29,17 @@
     header img {
       height: 40px;
       width: auto;
+      object-fit: contain;
+      background: transparent;
     }
     header span {
       font-size: 1.4rem;
       font-weight: 700;
     }
 
-    /* Form Container */
+    /* Layout */
     .container {
-      max-width: 600px;
+      max-width: 680px;
       margin: 2rem auto;
       padding: 0 1rem;
     }
@@ -47,8 +49,9 @@
       padding: 2rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       border: 1px solid var(--border-color);
+      margin-bottom: 2rem;
     }
-    h1 { font-size: 1.5rem; margin-bottom: 0.5rem; text-align: center; }
+    h1 { font-size: 1.6rem; margin-bottom: 0.3rem; text-align: center; }
     p.subtitle { text-align: center; color: #6c757d; font-size: 0.95rem; margin-bottom: 1.5rem; }
 
     .form-group { margin-bottom: 1.2rem; }
@@ -77,6 +80,7 @@
     }
     button:hover { background-color: var(--primary-hover); }
 
+    /* Results Box */
     .result-box {
       margin-top: 1.5rem;
       padding: 1.2rem;
@@ -87,74 +91,143 @@
       text-align: center;
     }
     .result-box h3 { color: var(--primary); font-size: 1.8rem; margin-bottom: 0.2rem; }
-    .result-box p { font-size: 0.9rem; color: #555; }
+    .result-box p { font-size: 0.95rem; color: #444; }
+
+    /* Guide & Tips Section */
+    .guide-section {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.8rem;
+    }
+    .guide-section h2 { font-size: 1.25rem; margin-bottom: 1rem; color: var(--text-color); }
+    .guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1rem; }
+    .guide-card { background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid var(--primary); }
+    .guide-card h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+    .guide-card p { font-size: 0.85rem; color: #6c757d; }
+
+    @media (max-width: 500px) {
+      .row, .guide-grid { flex-direction: column; grid-template-columns: 1fr; gap: 0.8rem; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Header with logo.png -->
   <header>
     <img src="logo.png" alt="BuildCal Logo">
     <span>BuildCal</span>
   </header>
 
-  <!-- Main Calculator Content -->
   <div class="container">
     <div class="card">
       <h1>Paint Coverage Calculator</h1>
-      <p class="subtitle">Accurate room estimation with doors & windows cutouts</p>
+      <p class="subtitle">Accurate room estimation with cutouts and texture controls</p>
 
+      <!-- Unit Selector -->
       <div class="form-group">
         <label for="unit">Unit System</label>
-        <select id="unit">
-          <option value="feet">Imperial (Feet / Gallons)</option>
-          <option value="meters">Metric (Meters / Liters)</option>
+        <select id="unit" onchange="updateUnitLabels()">
+          <option value="feet">Imperial (Feet, Sq Ft, Gallons)</option>
+          <option value="meters">Metric (Meters, Sq M, Liters)</option>
         </select>
       </div>
 
+      <!-- Dimensions -->
       <div class="row">
         <div class="form-group">
-          <label for="length">Room Length</label>
+          <label for="length">Room Length <span class="unit-label">(ft)</span></label>
           <input type="number" id="length" placeholder="e.g. 12" min="0" step="any">
         </div>
         <div class="form-group">
-          <label for="width">Room Width</label>
+          <label for="width">Room Width <span class="unit-label">(ft)</span></label>
           <input type="number" id="width" placeholder="e.g. 10" min="0" step="any">
         </div>
       </div>
 
       <div class="row">
         <div class="form-group">
-          <label for="height">Wall Height</label>
+          <label for="height">Wall Height <span class="unit-label">(ft)</span></label>
           <input type="number" id="height" placeholder="e.g. 8" min="0" step="any">
         </div>
         <div class="form-group">
-          <label for="coats">Coats of Paint</label>
-          <input type="number" id="coats" value="2" min="1">
+          <label for="coats">Number of Coats</label>
+          <select id="coats">
+            <option value="1">1 Coat (Touch up / Same color)</option>
+            <option value="2" selected>2 Coats (Standard / Recommended)</option>
+            <option value="3">3 Coats (Dark to Light color change)</option>
+          </select>
         </div>
       </div>
 
+      <!-- Cutouts -->
       <div class="row">
         <div class="form-group">
-          <label for="doors">Number of Doors</label>
+          <label for="doors">Doors Count</label>
           <input type="number" id="doors" value="1" min="0">
         </div>
         <div class="form-group">
-          <label for="windows">Number of Windows</label>
+          <label for="windows">Windows Count</label>
           <input type="number" id="windows" value="2" min="0">
         </div>
       </div>
 
+      <!-- Surface Texture -->
+      <div class="form-group">
+        <label for="texture">Wall Surface Texture</label>
+        <select id="texture">
+          <option value="1.0">Smooth / Painted Drywall (Standard coverage)</option>
+          <option value="1.15">Medium / Textured Drywall (+15% paint needed)</option>
+          <option value="1.30">Rough / Masonry & Stucco (+30% paint needed)</option>
+        </select>
+      </div>
+
       <button onclick="calculatePaint()">Calculate Paint Needed</button>
 
+      <!-- Results Display -->
       <div id="result" class="result-box">
         <h3 id="paintAmount">0 Gallons</h3>
         <p id="paintDetails">Total paintable wall area calculated.</p>
       </div>
     </div>
+
+    <!-- Paint Guide & Tips Section -->
+    <div class="guide-section">
+      <h2>Coverage Guide & Pro Tips</h2>
+      <div class="guide-grid">
+        <div class="guide-card">
+          <h4>1 Coat vs 2 Coats</h4>
+          <p>Use 1 coat for simple refresh projects of the same color. 2 coats ensure durability, accurate color richness, and full hiding power.</p>
+        </div>
+        <div class="guide-card">
+          <h4>Surface Texture Impact</h4>
+          <p>Unprimed, rough, or textured surfaces absorb significantly more liquid. Always factor in extra paint for brick, stucco, or heavy texture.</p>
+        </div>
+        <div class="guide-card">
+          <h4>Standard Openings</h4>
+          <p>Subtracted automatically: Doors (~21 sq ft / 2 sq m) and Windows (~15 sq ft / 1.4 sq m) so you don't overbuy paint.</p>
+        </div>
+        <div class="guide-card">
+          <h4>The 10% Rule</h4>
+          <p>Always keep a small leftover portion of your mixed batch for future edge touch-ups and repair patches down the road.</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
+    function updateUnitLabels() {
+      const unit = document.getElementById('unit').value;
+      const unitLabels = document.querySelectorAll('.unit-label');
+      const labelText = unit === 'feet' ? '(ft)' : '(m)';
+      
+      unitLabels.forEach(el => el.innerText = labelText);
+
+      // Re-calculate live if results are already showing
+      if (document.getElementById('result').style.display === 'block') {
+        calculatePaint();
+      }
+    }
+
     function calculatePaint() {
       const unit = document.getElementById('unit').value;
       const length = parseFloat(document.getElementById('length').value) || 0;
@@ -163,12 +236,14 @@
       const coats = parseInt(document.getElementById('coats').value) || 2;
       const doors = parseInt(document.getElementById('doors').value) || 0;
       const windows = parseInt(document.getElementById('windows').value) || 0;
+      const textureMultiplier = parseFloat(document.getElementById('texture').value) || 1.0;
 
       if (!length || !width || !height) {
-        alert("Please enter valid length, width, and height.");
+        alert("Please enter valid room length, width, and height.");
         return;
       }
 
+      // Calculation logic
       const perimeter = 2 * (length + width);
       let grossArea = perimeter * height;
 
@@ -178,22 +253,27 @@
       let netArea = grossArea - (doors * doorArea) - (windows * windowArea);
       if (netArea < 0) netArea = 0;
 
-      let totalCoverageNeeded = netArea * coats;
+      let totalCoverageNeeded = netArea * coats * textureMultiplier;
 
       let paintNeeded = 0;
       let unitLabel = "";
+      let areaLabel = "";
 
       if (unit === 'feet') {
+        // ~350 sq ft per gallon standard
         paintNeeded = (totalCoverageNeeded / 350).toFixed(2);
         unitLabel = "Gallons";
+        areaLabel = "sq ft";
       } else {
+        // ~10 sq meters per liter standard
         paintNeeded = (totalCoverageNeeded / 10).toFixed(2);
         unitLabel = "Liters";
+        areaLabel = "sq m";
       }
 
       const resultBox = document.getElementById('result');
       document.getElementById('paintAmount').innerText = `${paintNeeded} ${unitLabel}`;
-      document.getElementById('paintDetails').innerText = `Covers ${Math.round(totalCoverageNeeded)} ${unit === 'feet' ? 'sq ft' : 'sq m'} total wall area (${coats} coat${coats > 1 ? 's' : ''}).`;
+      document.getElementById('paintDetails').innerText = `Covers approx. ${Math.round(totalCoverageNeeded)} ${areaLabel} total area (${coats} coat${coats > 1 ? 's' : ''}).`;
       
       resultBox.style.display = 'block';
     }
