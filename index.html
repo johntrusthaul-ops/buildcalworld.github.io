@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BuildCal - Paint Calculator</title>
+  <title>BuildCal - Live Paint Estimator</title>
   <style>
     :root {
       --primary: #FF6600;
@@ -12,15 +12,15 @@
       --card-bg: #ffffff;
       --text-color: #1e293b;
       --border-color: #e2e8f0;
+      --accent-blue: #0284c7;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     
-    /* Overall Page Background with Subtle Paint & Architectural Pattern */
     body { 
       background-color: var(--bg-color); 
       background-image: 
-        radial-gradient(rgba(255, 102, 0, 0.03) 1px, transparent 0),
+        radial-gradient(rgba(255, 102, 0, 0.04) 1px, transparent 0),
         linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
       background-size: 24px 24px, 40px 40px, 40px 40px;
@@ -31,29 +31,62 @@
       flex-direction: column;
     }
 
-    /* Blueprint Top Navigation Bar */
+    /* Header Bar */
     header {
       background: #ffffff;
       border-bottom: 2px solid #e2e8f0;
-      padding: 1rem 2rem;
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .brand {
       display: flex;
       align-items: center;
       gap: 12px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-      background-image: linear-gradient(90deg, rgba(255, 102, 0, 0.05) 0%, transparent 100%);
     }
     header img {
       height: 38px;
       width: auto;
       object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    header img:hover {
+      transform: rotate(-5deg) scale(1.05);
     }
     header span {
       font-size: 1.35rem;
       font-weight: 700;
       color: #0f172a;
     }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #16a34a;
+      background: #f0fdf4;
+      padding: 0.25rem 0.65rem;
+      border-radius: 99px;
+      border: 1px solid #bbf7d0;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #16a34a;
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
 
-    /* Two-Column Split Grid */
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(22, 163, 74, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+    }
+
+    /* Layout */
     .wrapper {
       max-width: 1100px;
       margin: 2rem auto;
@@ -71,93 +104,111 @@
 
     .card {
       background: var(--card-bg);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 2rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
       border: 1px solid var(--border-color);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .form-group { margin-bottom: 1rem; }
-    label { display: block; font-weight: 600; margin-bottom: 0.3rem; font-size: 0.88rem; color: #334155; }
+    .form-group { margin-bottom: 1.1rem; }
+    label { display: block; font-weight: 600; margin-bottom: 0.35rem; font-size: 0.88rem; color: #334155; }
     input, select {
       width: 100%;
-      padding: 0.7rem;
+      padding: 0.75rem;
       border: 1px solid #cbd5e1;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 0.95rem;
       background: #f8fafc;
+      transition: all 0.2s ease;
     }
     input:focus, select:focus {
       outline: none;
       border-color: var(--primary);
       background: #fff;
+      box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
     }
     .row { display: flex; gap: 1rem; }
     .row .form-group { flex: 1; }
 
-    button {
-      width: 100%;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 0.9rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 0.5rem;
-      transition: background 0.2s ease;
+    /* Interactive Texture Selector */
+    .texture-cards {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 0.4rem;
     }
-    button:hover { background-color: var(--primary-hover); }
+    .texture-option {
+      flex: 1;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0.65rem 0.4rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.78rem;
+    }
+    .texture-option:hover {
+      border-color: var(--primary);
+      background: #fff;
+    }
+    .texture-option.active {
+      border-color: var(--primary);
+      background: #fff8f5;
+      font-weight: 700;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(255, 102, 0, 0.12);
+    }
 
-    /* Results Column with Subtle Soft Paint Stroke Background */
+    /* Live Results Panel */
     .results-panel {
-      background: #f0f9ff;
+      background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%);
       border: 1px solid #bae6fd;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 2rem;
       position: relative;
-      overflow: hidden;
-    }
-    .results-panel::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 160px;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(186, 230, 253, 0.4) 0%, rgba(125, 211, 252, 0.2) 100%);
-      border-radius: 0 12px 12px 0;
-      pointer-events: none;
+      box-shadow: 0 4px 20px rgba(2, 132, 199, 0.08);
+      transition: all 0.3s ease;
     }
 
-    .results-panel h2 { font-size: 1.2rem; color: #0369a1; margin-bottom: 0.5rem; }
-    .estimate-value { font-size: 2rem; font-weight: 800; color: #0284c7; margin-bottom: 0.5rem; }
-    .estimate-details { font-size: 0.9rem; color: #0f172a; margin-bottom: 1.5rem; }
-
-    /* Guide Sections inside Results Column */
-    .guide-block {
-      margin-top: 1.5rem;
-      padding-top: 1.2rem;
-      border-top: 1px dashed #cbd5e1;
-    }
-    .guide-block h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: #1e293b; }
-    .guide-block p { font-size: 0.85rem; color: #475569; }
-
-    .texture-icons {
+    .results-panel h2 { 
+      font-size: 1.15rem; 
+      color: #0369a1; 
+      margin-bottom: 0.3rem; 
       display: flex;
-      gap: 1rem;
-      margin-top: 0.8rem;
+      align-items: center;
+      justify-content: space-between;
     }
-    .texture-item {
-      flex: 1;
-      background: rgba(255, 255, 255, 0.7);
-      padding: 0.6rem;
-      border-radius: 6px;
-      text-align: center;
-      font-size: 0.75rem;
-      border: 1px solid #e2e8f0;
+    .live-tag {
+      font-size: 0.7rem;
+      background: #0284c7;
+      color: #fff;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
+
+    .estimate-value { 
+      font-size: 2.3rem; 
+      font-weight: 800; 
+      color: #0284c7; 
+      margin: 0.4rem 0;
+      transition: color 0.3s ease;
+    }
+    .estimate-details { font-size: 0.92rem; color: #334155; margin-bottom: 1.5rem; font-weight: 500; }
+
+    /* Guide Section Cards */
+    .guide-block {
+      margin-top: 1.2rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: 8px;
+      border: 1px solid rgba(186, 230, 253, 0.6);
+      backdrop-filter: blur(4px);
+    }
+    .guide-block h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; color: #0f172a; }
+    .guide-block p { font-size: 0.83rem; color: #475569; }
 
     footer {
       text-align: center;
@@ -176,91 +227,98 @@
 </head>
 <body>
 
+  <!-- Top Header with Live Indicator -->
   <header>
-    <img src="logo.png" alt="BuildCal Logo">
-    <span>BuildCal</span>
+    <div class="brand">
+      <img src="logo.png" alt="BuildCal Logo">
+      <span>BuildCal</span>
+    </div>
+    <div class="live-badge">
+      <div class="pulse-dot"></div>
+      Live Engine Active
+    </div>
   </header>
 
   <div class="wrapper">
     <div class="calculator-grid">
       
-      <!-- Input Controls Side -->
+      <!-- Interactive Inputs Column -->
       <div class="card">
         <div class="form-group">
           <label for="unit">Unit System:</label>
           <select id="unit" onchange="updateUnitLabels()">
-            <option value="feet">Imperial (Feet)</option>
-            <option value="meters">Metric (Meters)</option>
+            <option value="feet">Imperial (Feet / Gallons)</option>
+            <option value="meters">Metric (Meters / Liters)</option>
           </select>
         </div>
 
         <div class="row">
           <div class="form-group">
             <label for="length">Room Length <span class="unit-label">(ft)</span>:</label>
-            <input type="number" id="length" placeholder="14" min="0" step="any">
+            <input type="number" id="length" placeholder="14" value="14" min="0" step="any" oninput="calculatePaint()">
           </div>
           <div class="form-group">
             <label for="width">Room Width <span class="unit-label">(ft)</span>:</label>
-            <input type="number" id="width" placeholder="12" min="0" step="any">
+            <input type="number" id="width" placeholder="12" value="12" min="0" step="any" oninput="calculatePaint()">
           </div>
         </div>
 
         <div class="form-group">
           <label for="height">Wall Height <span class="unit-label">(ft)</span>:</label>
-          <input type="number" id="height" placeholder="9" min="0" step="any">
+          <input type="number" id="height" placeholder="9" value="9" min="0" step="any" oninput="calculatePaint()">
         </div>
 
         <div class="form-group">
           <label for="coats">Number of Coats:</label>
-          <input type="number" id="coats" value="2" min="1">
+          <input type="number" id="coats" value="2" min="1" oninput="calculatePaint()">
         </div>
 
         <div class="row">
           <div class="form-group">
             <label for="doors">Number of Doors:</label>
-            <input type="number" id="doors" value="1" min="0">
+            <input type="number" id="doors" value="1" min="0" oninput="calculatePaint()">
           </div>
           <div class="form-group">
             <label for="windows">Number of Windows:</label>
-            <input type="number" id="windows" value="2" min="0">
+            <input type="number" id="windows" value="2" min="0" oninput="calculatePaint()">
           </div>
         </div>
 
         <div class="form-group">
-          <label for="texture">Surface Texture:</label>
-          <select id="texture">
-            <option value="1.0">Smooth/Painted Drywall</option>
-            <option value="1.15">Medium / Textured Drywall (+15%)</option>
-            <option value="1.30">Rough / Stucco / Masonry (+30%)</option>
-          </select>
+          <label>Surface Texture:</label>
+          <div class="texture-cards">
+            <div class="texture-option active" data-value="1.0" onclick="selectTexture(this)">
+              <strong>Smooth</strong><br>Standard
+            </div>
+            <div class="texture-option" data-value="1.15" onclick="selectTexture(this)">
+              <strong>Medium</strong><br>+15%
+            </div>
+            <div class="texture-option" data-value="1.30" onclick="selectTexture(this)">
+              <strong>Rough</strong><br>+30%
+            </div>
+          </div>
+          <input type="hidden" id="texture" value="1.0">
         </div>
-
-        <button onclick="calculatePaint()">Calculate Paint Needed</button>
       </div>
 
-      <!-- Results & Guides Side -->
+      <!-- Live Updating Results Column -->
       <div class="results-panel">
-        <h2>Results</h2>
-        <div class="estimate-value" id="paintAmount">Estimate: --</div>
-        <div class="estimate-details" id="paintDetails">Enter your room dimensions to see coverage details.</div>
+        <h2>
+          <span>Live Estimate</span>
+          <span class="live-tag">Auto-updating</span>
+        </h2>
+        
+        <div class="estimate-value" id="paintAmount">2.15 Gallons</div>
+        <div class="estimate-details" id="paintDetails">Total Paintable Area: 432 sq ft | Coats: 2</div>
 
         <div class="guide-block">
           <h3>Recommended 1 vs 2 Coats</h3>
-          <p>Use 1 coat for light touch-ups on existing matching colors. Apply 2 coats for full richness and coverage over primed or dark walls.</p>
+          <p>Use 1 coat for simple touch-ups on matching colors. Use 2 coats for maximum richness and covering darker walls.</p>
         </div>
 
         <div class="guide-block">
-          <h3>How to Calculate Coverage</h3>
-          <p id="coverageFormula">Total Paintable Wall Area = Perimeter × Height - Openings (Doors/Windows).</p>
-        </div>
-
-        <div class="guide-block">
-          <h3>Surface Texture Considerations</h3>
-          <div class="texture-icons">
-            <div class="texture-item"><strong>Smooth</strong><br>Base Rate</div>
-            <div class="texture-item"><strong>Medium</strong><br>+15% paint</div>
-            <div class="texture-item"><strong>Rough</strong><br>+30% paint</div>
-          </div>
+          <h3>Cutout Deduction Formula</h3>
+          <p id="coverageFormula">Doors (~21 sq ft / 2 sq m) and Windows (~15 sq ft / 1.4 sq m) are automatically subtracted live.</p>
         </div>
       </div>
 
@@ -268,20 +326,24 @@
   </div>
 
   <footer>
-    <p>Contact | Privacy | Terms</p>
+    <p>BuildCal Paint Estimator &copy; 2026 | Contact | Privacy</p>
   </footer>
 
   <script>
+    function selectTexture(element) {
+      document.querySelectorAll('.texture-option').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+      document.getElementById('texture').value = element.getAttribute('data-value');
+      calculatePaint();
+    }
+
     function updateUnitLabels() {
       const unit = document.getElementById('unit').value;
       const unitLabels = document.querySelectorAll('.unit-label');
       const labelText = unit === 'feet' ? '(ft)' : '(m)';
       
       unitLabels.forEach(el => el.innerText = labelText);
-
-      if (document.getElementById('paintAmount').innerText !== 'Estimate: --') {
-        calculatePaint();
-      }
+      calculatePaint();
     }
 
     function calculatePaint() {
@@ -289,13 +351,14 @@
       const length = parseFloat(document.getElementById('length').value) || 0;
       const width = parseFloat(document.getElementById('width').value) || 0;
       const height = parseFloat(document.getElementById('height').value) || 0;
-      const coats = parseInt(document.getElementById('coats').value) || 2;
+      const coats = parseInt(document.getElementById('coats').value) || 1;
       const doors = parseInt(document.getElementById('doors').value) || 0;
       const windows = parseInt(document.getElementById('windows').value) || 0;
       const textureMultiplier = parseFloat(document.getElementById('texture').value) || 1.0;
 
-      if (!length || !width || !height) {
-        alert("Please enter valid room length, width, and height.");
+      if (length <= 0 || width <= 0 || height <= 0) {
+        document.getElementById('paintAmount').innerText = "Estimate: --";
+        document.getElementById('paintDetails').innerText = "Enter valid dimensions above to see live results.";
         return;
       }
 
@@ -324,9 +387,12 @@
         areaLabel = "sq m";
       }
 
-      document.getElementById('paintAmount').innerText = `Estimate: ${paintNeeded} ${unitLabel}`;
-      document.getElementById('paintDetails').innerText = `Total Paintable Wall Area: ${Math.round(totalCoverageNeeded)} ${areaLabel} | Coats: ${coats}`;
+      document.getElementById('paintAmount').innerText = `${paintNeeded} ${unitLabel}`;
+      document.getElementById('paintDetails').innerText = `Total Paintable Area: ${Math.round(totalCoverageNeeded)} ${areaLabel} | Coats: ${coats}`;
     }
+
+    // Run once on load to populate defaults
+    window.onload = calculatePaint;
   </script>
 </body>
 </html>
