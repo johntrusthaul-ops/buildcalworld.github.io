@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BuildCal - Live Paint Estimator</title>
+  <title>BuildCal - Live Interactive Paint Estimator</title>
   <style>
     :root {
       --primary: #FF6600;
@@ -20,7 +20,7 @@
     body { 
       background-color: var(--bg-color); 
       background-image: 
-        radial-gradient(rgba(255, 102, 0, 0.04) 1px, transparent 0),
+        radial-gradient(rgba(255, 102, 0, 0.05) 1px, transparent 0),
         linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
       background-size: 24px 24px, 40px 40px, 40px 40px;
@@ -41,25 +41,11 @@
       justify-content: space-between;
       box-shadow: 0 2px 8px rgba(0,0,0,0.03);
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    header img {
-      height: 38px;
-      width: auto;
-      object-fit: contain;
-      transition: transform 0.3s ease;
-    }
-    header img:hover {
-      transform: rotate(-5deg) scale(1.05);
-    }
-    header span {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: #0f172a;
-    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    header img { height: 38px; width: auto; object-fit: contain; transition: transform 0.3s ease; }
+    header img:hover { transform: rotate(-5deg) scale(1.05); }
+    header span { font-size: 1.35rem; font-weight: 700; color: #0f172a; }
+    
     .live-badge {
       display: flex;
       align-items: center;
@@ -77,7 +63,7 @@
       height: 8px;
       background-color: #16a34a;
       border-radius: 50%;
-      animation: pulse 1.8s infinite;
+      animation: pulse 1.5s infinite;
     }
 
     @keyframes pulse {
@@ -86,7 +72,6 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
     }
 
-    /* Layout */
     .wrapper {
       max-width: 1100px;
       margin: 2rem auto;
@@ -108,7 +93,6 @@
       padding: 2rem;
       box-shadow: 0 4px 20px rgba(0,0,0,0.04);
       border: 1px solid var(--border-color);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .form-group { margin-bottom: 1.1rem; }
@@ -131,12 +115,8 @@
     .row { display: flex; gap: 1rem; }
     .row .form-group { flex: 1; }
 
-    /* Interactive Texture Selector */
-    .texture-cards {
-      display: flex;
-      gap: 0.6rem;
-      margin-top: 0.4rem;
-    }
+    /* Interactive Texture Cards */
+    .texture-cards { display: flex; gap: 0.6rem; margin-top: 0.4rem; }
     .texture-option {
       flex: 1;
       background: #f8fafc;
@@ -148,10 +128,7 @@
       transition: all 0.2s ease;
       font-size: 0.78rem;
     }
-    .texture-option:hover {
-      border-color: var(--primary);
-      background: #fff;
-    }
+    .texture-option:hover { border-color: var(--primary); background: #fff; }
     .texture-option.active {
       border-color: var(--primary);
       background: #fff8f5;
@@ -160,7 +137,7 @@
       box-shadow: 0 2px 6px rgba(255, 102, 0, 0.12);
     }
 
-    /* Live Results Panel */
+    /* Results Column */
     .results-panel {
       background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%);
       border: 1px solid #bae6fd;
@@ -168,7 +145,6 @@
       padding: 2rem;
       position: relative;
       box-shadow: 0 4px 20px rgba(2, 132, 199, 0.08);
-      transition: all 0.3s ease;
     }
 
     .results-panel h2 { 
@@ -194,21 +170,69 @@
       font-weight: 800; 
       color: #0284c7; 
       margin: 0.4rem 0;
-      transition: color 0.3s ease;
+      transition: all 0.3s ease;
     }
-    .estimate-details { font-size: 0.92rem; color: #334155; margin-bottom: 1.5rem; font-weight: 500; }
+    .estimate-details { font-size: 0.92rem; color: #334155; margin-bottom: 1.2rem; font-weight: 500; }
 
-    /* Guide Section Cards */
-    .guide-block {
-      margin-top: 1.2rem;
+    /* Animated Visual Wall Preview */
+    .wall-preview {
+      width: 100%;
+      height: 60px;
+      border-radius: 8px;
+      background: #cbd5e1;
+      margin-bottom: 1.2rem;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid #94a3b8;
+    }
+    .wall-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #FF6600, #ff8533);
+      transition: width 0.5s ease-in-out, opacity 0.3s ease;
+    }
+
+    /* Container / Can Breakdown Box */
+    .can-breakdown {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #93c5fd;
+      border-radius: 10px;
       padding: 1rem;
+      margin-bottom: 1.2rem;
+      backdrop-filter: blur(4px);
+    }
+    .can-breakdown h3 {
+      font-size: 0.9rem;
+      color: #0369a1;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .can-list {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .can-badge {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+      padding: 0.4rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .guide-block {
+      margin-top: 1rem;
+      padding: 0.8rem 1rem;
       background: rgba(255, 255, 255, 0.75);
       border-radius: 8px;
       border: 1px solid rgba(186, 230, 253, 0.6);
-      backdrop-filter: blur(4px);
     }
-    .guide-block h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; color: #0f172a; }
-    .guide-block p { font-size: 0.83rem; color: #475569; }
+    .guide-block h3 { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.2rem; color: #0f172a; }
+    .guide-block p { font-size: 0.82rem; color: #475569; }
 
     footer {
       text-align: center;
@@ -227,7 +251,6 @@
 </head>
 <body>
 
-  <!-- Top Header with Live Indicator -->
   <header>
     <div class="brand">
       <img src="logo.png" alt="BuildCal Logo">
@@ -242,7 +265,7 @@
   <div class="wrapper">
     <div class="calculator-grid">
       
-      <!-- Interactive Inputs Column -->
+      <!-- Inputs Column -->
       <div class="card">
         <div class="form-group">
           <label for="unit">Unit System:</label>
@@ -255,17 +278,17 @@
         <div class="row">
           <div class="form-group">
             <label for="length">Room Length <span class="unit-label">(ft)</span>:</label>
-            <input type="number" id="length" placeholder="14" value="14" min="0" step="any" oninput="calculatePaint()">
+            <input type="number" id="length" value="14" min="0" step="any" oninput="calculatePaint()">
           </div>
           <div class="form-group">
             <label for="width">Room Width <span class="unit-label">(ft)</span>:</label>
-            <input type="number" id="width" placeholder="12" value="12" min="0" step="any" oninput="calculatePaint()">
+            <input type="number" id="width" value="12" min="0" step="any" oninput="calculatePaint()">
           </div>
         </div>
 
         <div class="form-group">
           <label for="height">Wall Height <span class="unit-label">(ft)</span>:</label>
-          <input type="number" id="height" placeholder="9" value="9" min="0" step="any" oninput="calculatePaint()">
+          <input type="number" id="height" value="9" min="0" step="any" oninput="calculatePaint()">
         </div>
 
         <div class="form-group">
@@ -301,7 +324,7 @@
         </div>
       </div>
 
-      <!-- Live Updating Results Column -->
+      <!-- Live Interactive Results Column -->
       <div class="results-panel">
         <h2>
           <span>Live Estimate</span>
@@ -311,14 +334,23 @@
         <div class="estimate-value" id="paintAmount">2.15 Gallons</div>
         <div class="estimate-details" id="paintDetails">Total Paintable Area: 432 sq ft | Coats: 2</div>
 
-        <div class="guide-block">
-          <h3>Recommended 1 vs 2 Coats</h3>
-          <p>Use 1 coat for simple touch-ups on matching colors. Use 2 coats for maximum richness and covering darker walls.</p>
+        <!-- Animated Wall Visual Fill Bar -->
+        <div class="wall-preview">
+          <div class="wall-fill" id="wallFill"></div>
+        </div>
+
+        <!-- Can Recommendation Box -->
+        <div class="can-breakdown">
+          <h3>🪣 Recommended Container Purchase</h3>
+          <div class="can-list" id="canList">
+            <div class="can-badge">2 × Gallon Cans</div>
+            <div class="can-badge">1 × Quart Can</div>
+          </div>
         </div>
 
         <div class="guide-block">
-          <h3>Cutout Deduction Formula</h3>
-          <p id="coverageFormula">Doors (~21 sq ft / 2 sq m) and Windows (~15 sq ft / 1.4 sq m) are automatically subtracted live.</p>
+          <h3>Recommended 1 vs 2 Coats</h3>
+          <p>Use 1 coat for simple touch-ups on matching colors. Use 2 coats for maximum richness and covering dark walls.</p>
         </div>
       </div>
 
@@ -358,7 +390,9 @@
 
       if (length <= 0 || width <= 0 || height <= 0) {
         document.getElementById('paintAmount').innerText = "Estimate: --";
-        document.getElementById('paintDetails').innerText = "Enter valid dimensions above to see live results.";
+        document.getElementById('paintDetails').innerText = "Enter valid dimensions above.";
+        document.getElementById('wallFill').style.width = "0%";
+        document.getElementById('canList').innerHTML = `<div class="can-badge">--</div>`;
         return;
       }
 
@@ -378,20 +412,62 @@
       let areaLabel = "";
 
       if (unit === 'feet') {
-        paintNeeded = (totalCoverageNeeded / 350).toFixed(2);
+        paintNeeded = (totalCoverageNeeded / 350);
         unitLabel = "Gallons";
         areaLabel = "sq ft";
       } else {
-        paintNeeded = (totalCoverageNeeded / 10).toFixed(2);
+        paintNeeded = (totalCoverageNeeded / 10);
         unitLabel = "Liters";
         areaLabel = "sq m";
       }
 
-      document.getElementById('paintAmount').innerText = `${paintNeeded} ${unitLabel}`;
+      // Update text displays
+      document.getElementById('paintAmount').innerText = `${paintNeeded.toFixed(2)} ${unitLabel}`;
       document.getElementById('paintDetails').innerText = `Total Paintable Area: ${Math.round(totalCoverageNeeded)} ${areaLabel} | Coats: ${coats}`;
+
+      // Update Wall Fill Visual Animation
+      let percentage = Math.min((paintNeeded / 5) * 100, 100);
+      document.getElementById('wallFill').style.width = `${percentage}%`;
+
+      // Calculate Cans / Containers Breakdown
+      calculateCans(paintNeeded, unit);
     }
 
-    // Run once on load to populate defaults
+    function calculateCans(amount, unit) {
+      const canList = document.getElementById('canList');
+      let html = '';
+
+      if (unit === 'feet') {
+        // Gallons & Quarts (1 Gallon = 4 Quarts)
+        let gallons = Math.floor(amount);
+        let remainder = amount - gallons;
+        let quarts = Math.ceil(remainder * 4);
+
+        if (quarts === 4) {
+          gallons += 1;
+          quarts = 0;
+        }
+
+        if (gallons > 0) html += `<div class="can-badge">${gallons} × Gallon Bucket${gallons > 1 ? 's' : ''}</div>`;
+        if (quarts > 0) html += `<div class="can-badge">${quarts} × Quart Can${quarts > 1 ? 's' : ''}</div>`;
+      } else {
+        // Metric Liters (5L Buckets & 1L Cans)
+        let largeBuckets = Math.floor(amount / 5);
+        let remainder = amount % 5;
+        let smallCans = Math.ceil(remainder);
+
+        if (smallCans === 5) {
+          largeBuckets += 1;
+          smallCans = 0;
+        }
+
+        if (largeBuckets > 0) html += `<div class="can-badge">${largeBuckets} × 5-Liter Bucket${largeBuckets > 1 ? 's' : ''}</div>`;
+        if (smallCans > 0) html += `<div class="can-badge">${smallCans} × 1-Liter Can${smallCans > 1 ? 's' : ''}</div>`;
+      }
+
+      canList.innerHTML = html || `<div class="can-badge">1 × Small Can</div>`;
+    }
+
     window.onload = calculatePaint;
   </script>
 </body>
