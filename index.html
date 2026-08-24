@@ -104,6 +104,7 @@ padding: 0.75rem 0.5rem;
 text-align: center;
 cursor: pointer;
 font-size: 0.85rem;
+user-select: none;
 }
 .texture-option.active {
 border-color: var(--primary);
@@ -218,7 +219,7 @@ Live Engine Active
 <div class="card">
 <div class="form-group">
 <label for="unit">Unit System:</label>
-<select id="unit" onchange="updateUnitLabels()">
+<select id="unit">
 <option value="feet">Imperial (Feet / Gallons)</option>
 <option value="meters">Metric (Meters / Liters)</option>
 </select>
@@ -227,47 +228,47 @@ Live Engine Active
 <div class="row">
 <div class="form-group">
 <label for="length">Room Length <span class="unit-label">(ft)</span>:</label>
-<input type="number" id="length" value="14" min="0" oninput="calculatePaint()">
+<input type="number" id="length" value="14" min="0">
 </div>
 <div class="form-group">
 <label for="width">Room Width <span class="unit-label">(ft)</span>:</label>
-<input type="number" id="width" value="12" min="0" oninput="calculatePaint()">
+<input type="number" id="width" value="12" min="0">
 </div>
 </div>
 
 <div class="form-group">
 <label for="height">Wall Height <span class="unit-label">(ft)</span>:</label>
-<input type="number" id="height" value="9" min="0" oninput="calculatePaint()">
+<input type="number" id="height" value="9" min="0">
 </div>
 
 <div class="form-group">
 <label for="coats">Number of Coats:</label>
-<input type="number" id="coats" value="2" min="1" oninput="calculatePaint()">
+<input type="number" id="coats" value="2" min="1">
 </div>
 
 <div class="row">
 <div class="form-group">
 <label for="doors">Number of Doors:</label>
-<input type="number" id="doors" value="1" min="0" oninput="calculatePaint()">
+<input type="number" id="doors" value="1" min="0">
 </div>
 <div class="form-group">
 <label for="windows">Number of Windows:</label>
-<input type="number" id="windows" value="2" min="0" oninput="calculatePaint()">
+<input type="number" id="windows" value="2" min="0">
 </div>
 </div>
 
 <div class="form-group">
 <label>Surface Texture:</label>
 <div class="texture-cards">
-<div class="texture-option active" data-value="1.0" onclick="selectTexture(this)">
+<div class="texture-option active" data-value="1.0">
 <strong>Smooth</strong>
 <span class="texture-desc">Standard drywall</span>
 </div>
-<div class="texture-option" data-value="1.15" onclick="selectTexture(this)">
+<div class="texture-option" data-value="1.15">
 <strong>Medium</strong>
 <span class="texture-desc">Orange peel (+15%)</span>
 </div>
-<div class="texture-option" data-value="1.30" onclick="selectTexture(this)">
+<div class="texture-option" data-value="1.30">
 <strong>Rough</strong>
 <span class="texture-desc">Stucco (+30%)</span>
 </div>
@@ -305,19 +306,35 @@ Live Engine Active
 </footer>
 
 <script>
-function selectTexture(element) {
-document.querySelectorAll('.texture-option').forEach(el => el.classList.remove('active'));
-element.classList.add('active');
-document.getElementById('texture').value = element.getAttribute('data-value');
+document.addEventListener('DOMContentLoaded', () => {
+// Texture selection logic
+const textureOptions = document.querySelectorAll('.texture-option');
+textureOptions.forEach(option => {
+option.addEventListener('click', () => {
+textureOptions.forEach(el => el.classList.remove('active'));
+option.classList.add('active');
+document.getElementById('texture').value = option.getAttribute('data-value');
 calculatePaint();
-}
+});
+});
 
-function updateUnitLabels() {
+// Unit change listener
+document.getElementById('unit').addEventListener('change', () => {
 const unit = document.getElementById('unit').value;
 const labelText = unit === 'feet' ? '(ft)' : '(m)';
 document.querySelectorAll('.unit-label').forEach(el => el.innerText = labelText);
 calculatePaint();
-}
+});
+
+// Input listeners for real-time calculation
+const inputs = document.querySelectorAll('input[type="number"]');
+inputs.forEach(input => {
+input.addEventListener('input', calculatePaint);
+});
+
+// Initial calculation run
+calculatePaint();
+});
 
 function calculatePaint() {
 const unit = document.getElementById('unit').value;
@@ -380,8 +397,6 @@ if (smallCans > 0) html += <div class="can-badge"&gt;${smallCans} x 1-Liter Can$
 
 canList.innerHTML = html || <div class="can-badge"&gt;1 x Small Can&lt;/div>;
 }
-
-window.onload = calculatePaint;
 </script>
 </body>
 </html>
