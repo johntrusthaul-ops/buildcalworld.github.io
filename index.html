@@ -105,6 +105,10 @@ text-align: center;
 cursor: pointer;
 font-size: 0.85rem;
 user-select: none;
+transition: all 0.2s ease;
+}
+.texture-option:hover {
+border-color: var(--primary);
 }
 .texture-option.active {
 border-color: var(--primary);
@@ -312,9 +316,11 @@ Live Engine Active
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+// 1. Texture options click listener
 const textureOptions = document.querySelectorAll('.texture-option');
 textureOptions.forEach(option => {
-option.addEventListener('click', () => {
+option.addEventListener('click', (e) => {
+e.preventDefault();
 textureOptions.forEach(el => el.classList.remove('active'));
 option.classList.add('active');
 document.getElementById('texture').value = option.getAttribute('data-value');
@@ -322,23 +328,34 @@ calculatePaint();
 });
 });
 
-document.getElementById('unit').addEventListener('change', () => {
-const unit = document.getElementById('unit').value;
+// 2. Unit dropdown change listener
+const unitSelect = document.getElementById('unit');
+if (unitSelect) {
+unitSelect.addEventListener('change', () => {
+const unit = unitSelect.value;
 const labelText = unit === 'feet' ? '(ft)' : '(m)';
-document.querySelectorAll('.unit-label').forEach(el => el.innerText = labelText);
+document.querySelectorAll('.unit-label').forEach(el => {
+el.innerText = labelText;
+});
 calculatePaint();
 });
+}
 
+// 3. Numeric input live-typing listeners
 const inputs = document.querySelectorAll('input[type="number"]');
 inputs.forEach(input => {
 input.addEventListener('input', calculatePaint);
+input.addEventListener('change', calculatePaint);
 });
 
+// Initial run
 calculatePaint();
 });
 
 function calculatePaint() {
-const unit = document.getElementById('unit').value;
+const unitSelect = document.getElementById('unit');
+const unit = unitSelect ? unitSelect.value : 'feet';
+
 const length = parseFloat(document.getElementById('length').value) || 0;
 const width = parseFloat(document.getElementById('width').value) || 0;
 const height = parseFloat(document.getElementById('height').value) || 0;
