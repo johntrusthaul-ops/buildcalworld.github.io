@@ -7,7 +7,7 @@
 <style>
 :root {
 --primary: #FF6600;
---card-bg: rgba(255, 255, 255, 0.95);
+--card-bg: #ffffff;
 --text-color: #1e293b;
 --border-color: #cbd5e1;
 }
@@ -15,39 +15,16 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
 body {
+background-color: #f1f5f9;
 color: var(--text-color);
 line-height: 1.5;
 min-height: 100vh;
 display: flex;
 flex-direction: column;
-position: relative;
-overflow-x: hidden;
-}
-
-/* Animated background layer for slow pan/zoom wall painting effect */
-.bg-animation {
-position: fixed;
-top: 0;
-left: 0;
-width: 100vw;
-height: 100vh;
-background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.75)),
-url('https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=1920&q=80');
-background-size: cover;
-background-position: center;
-z-index: -1;
-animation: slowPan 25s ease-in-out infinite alternate;
-}
-
-@keyframes slowPan {
-0% { transform: scale(1) translate(0, 0); }
-50% { transform: scale(1.05) translate(-1%, -1%); }
-100% { transform: scale(1.1) translate(1%, 1%); }
 }
 
 header {
-background: rgba(255, 255, 255, 0.95);
-backdrop-filter: blur(8px);
+background: #ffffff;
 border-bottom: 2px solid #e2e8f0;
 padding: 0.9rem 2rem;
 display: flex;
@@ -90,9 +67,9 @@ width: 100%;
 flex: 1;
 }
 
-.page-title { margin-bottom: 1.5rem; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+.page-title { margin-bottom: 1.5rem; color: #0f172a; }
 .page-title h1 { font-size: 1.8rem; font-weight: 800; }
-.page-title p { font-size: 0.95rem; color: #e2e8f0; }
+.page-title p { font-size: 0.95rem; color: #64748b; }
 
 .calculator-grid {
 display: grid;
@@ -102,11 +79,10 @@ gap: 2rem;
 
 .card, .results-panel {
 background: var(--card-bg);
-backdrop-filter: blur(10px);
 border-radius: 14px;
 padding: 2rem;
-box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-border: 1px solid rgba(255, 255, 255, 0.3);
+box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+border: 1px solid var(--border-color);
 }
 
 .form-group { margin-bottom: 1.1rem; }
@@ -135,7 +111,6 @@ font-size: 0.85rem;
 user-select: none;
 transition: all 0.2s ease;
 }
-/* Prevent child text elements from blocking clicks */
 .texture-option * { pointer-events: none; }
 .texture-option:hover { border-color: var(--primary); background: #fff; }
 .texture-option.active {
@@ -153,7 +128,7 @@ margin-top: 0.25rem;
 }
 
 .results-panel {
-background: linear-gradient(145deg, rgba(240, 249, 255, 0.95) 0%, rgba(224, 242, 254, 0.95) 100%);
+background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%);
 border: 1px solid #bae6fd;
 }
 
@@ -218,14 +193,40 @@ font-size: 0.85rem;
 font-weight: 700;
 }
 
+/* Dedicated animated paint preview section at the bottom of results panel */
+.animated-paint-box {
+width: 100%;
+height: 90px;
+border-radius: 8px;
+overflow: hidden;
+position: relative;
+border: 1px solid #93c5fd;
+box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+.animated-bg {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
+url('https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=800&q=80');
+background-size: cover;
+background-position: center;
+animation: slowPan 15s ease-in-out infinite alternate;
+}
+@keyframes slowPan {
+0% { transform: scale(1) translate(0, 0); }
+100% { transform: scale(1.1) translate(-2%, -2%); }
+}
+
 footer {
 text-align: center;
 padding: 1.5rem;
 font-size: 0.85rem;
-color: #e2e8f0;
-background: rgba(15, 23, 42, 0.8);
-backdrop-filter: blur(8px);
-border-top: 1px solid rgba(255,255,255,0.1);
+color: #64748b;
+background: #ffffff;
+border-top: 1px solid var(--border-color);
 margin-top: auto;
 }
 
@@ -235,9 +236,6 @@ margin-top: auto;
 </style>
 </head>
 <body>
-
-<!-- Animated background element -->
-<div class="bg-animation"></div>
 
 <header>
 <div class="brand">
@@ -337,6 +335,11 @@ Live Engine Active
 <div class="can-badge">2 Gallon Buckets</div>
 <div class="can-badge">1 Quart Can</div>
 </div>
+</div>
+
+<!-- Animated Painting Background Box -->
+<div class="animated-paint-box">
+<div class="animated-bg"></div>
 </div>
 </div>
 </div>
