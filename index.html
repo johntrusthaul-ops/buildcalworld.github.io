@@ -193,7 +193,7 @@ font-size: 0.85rem;
 font-weight: 700;
 }
 
-/* Dedicated animated painting preview box positioned cleanly at the bottom */
+/* Animated painting preview box */
 .animated-paint-box {
 width: 100%;
 height: 160px;
@@ -258,7 +258,7 @@ Live Engine Active
 <div class="card">
 <div class="form-group">
 <label for="unit">Unit System:</label>
-<select id="unit">
+<select id="unit" onchange="handleUnitChange()">
 <option value="feet">Imperial (Feet / Gallons)</option>
 <option value="meters">Metric (Meters / Liters)</option>
 </select>
@@ -267,47 +267,47 @@ Live Engine Active
 <div class="row">
 <div class="form-group">
 <label for="length" id="lengthLabel">Room Length (ft):</label>
-<input type="number" id="length" value="14" min="0">
+<input type="number" id="length" value="14" min="0" oninput="calculatePaint()">
 </div>
 <div class="form-group">
 <label for="width" id="widthLabel">Room Width (ft):</label>
-<input type="number" id="width" value="12" min="0">
+<input type="number" id="width" value="12" min="0" oninput="calculatePaint()">
 </div>
 </div>
 
 <div class="form-group">
 <label for="height" id="heightLabel">Wall Height (ft):</label>
-<input type="number" id="height" value="9" min="0">
+<input type="number" id="height" value="9" min="0" oninput="calculatePaint()">
 </div>
 
 <div class="form-group">
 <label for="coats">Number of Coats:</label>
-<input type="number" id="coats" value="2" min="1">
+<input type="number" id="coats" value="2" min="1" oninput="calculatePaint()">
 </div>
 
 <div class="row">
 <div class="form-group">
 <label for="doors">Number of Doors:</label>
-<input type="number" id="doors" value="1" min="0">
+<input type="number" id="doors" value="1" min="0" oninput="calculatePaint()">
 </div>
 <div class="form-group">
 <label for="windows">Number of Windows:</label>
-<input type="number" id="windows" value="2" min="0">
+<input type="number" id="windows" value="2" min="0" oninput="calculatePaint()">
 </div>
 </div>
 
 <div class="form-group">
 <label>Surface Texture:</label>
 <div class="texture-cards">
-<div class="texture-option active" data-value="1.0">
+<div class="texture-option active" data-value="1.0" onclick="setTexture(this, 1.0)">
 <strong>Smooth</strong>
 <span class="texture-desc">Standard drywall</span>
 </div>
-<div class="texture-option" data-value="1.15">
+<div class="texture-option" data-value="1.15" onclick="setTexture(this, 1.15)">
 <strong>Medium</strong>
 <span class="texture-desc">Orange peel (+15%)</span>
 </div>
-<div class="texture-option" data-value="1.30">
+<div class="texture-option" data-value="1.30" onclick="setTexture(this, 1.30)">
 <strong>Rough</strong>
 <span class="texture-desc">Stucco (+30%)</span>
 </div>
@@ -338,7 +338,7 @@ Live Engine Active
 </div>
 </div>
 
-<!-- Dedicated Animated Painting Preview Box at the Bottom -->
+<!-- Animated Painting Preview Box -->
 <div class="animated-paint-box">
 <div class="animated-bg"></div>
 </div>
@@ -351,51 +351,25 @@ Live Engine Active
 </footer>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-// 1. Texture options click listener
-const textureOptions = document.querySelectorAll('.texture-option');
-textureOptions.forEach(option => {
-option.addEventListener('click', () => {
-textureOptions.forEach(el => el.classList.remove('active'));
-option.classList.add('active');
-document.getElementById('texture').value = option.getAttribute('data-value');
+function setTexture(element, val) {
+document.querySelectorAll('.texture-option').forEach(el => el.classList.remove('active'));
+element.classList.add('active');
+document.getElementById('texture').value = val;
 calculatePaint();
-});
-});
+}
 
-// 2. Unit dropdown change listener & initializer
-const unitSelect = document.getElementById('unit');
-
-function updateUnitLabels() {
-const unit = unitSelect.value;
+function handleUnitChange() {
+const unit = document.getElementById('unit').value;
 const suffix = unit === 'feet' ? '(ft)' : '(m)';
 
 document.getElementById('lengthLabel').innerText = Room Length ${suffix}:; document.getElementById('widthLabel').innerText =Room Width ${suffix}:;
 document.getElementById('heightLabel').innerText = Wall Height ${suffix}:`;
-}
 
-if (unitSelect) {
-unitSelect.addEventListener('change', () => {
-updateUnitLabels();
 calculatePaint();
-});
 }
-
-// 3. Numeric inputs listener
-const inputs = document.querySelectorAll('input[type="number"]');
-inputs.forEach(input => {
-input.addEventListener('input', calculatePaint);
-input.addEventListener('change', calculatePaint);
-});
-
-// Initial run
-updateUnitLabels();
-calculatePaint();
-});
 
 function calculatePaint() {
-const unitSelect = document.getElementById('unit');
-const unit = unitSelect ? unitSelect.value : 'feet';
+const unit = document.getElementById('unit').value;
 
 const length = parseFloat(document.getElementById('length').value) || 0;
 const width = parseFloat(document.getElementById('width').value) || 0;
@@ -453,6 +427,11 @@ if (largeBuckets > 0) html += <div class="can-badge"&gt;${largeBuckets} 5-Liter 
 
 canList.innerHTML = html || <div class="can-badge"&gt;1 Quart Can&lt;/div>;
 }
+
+// Run initial calculation on load
+window.onload = function() {
+handleUnitChange();
+};
 </script>
 </body>
 </html>
