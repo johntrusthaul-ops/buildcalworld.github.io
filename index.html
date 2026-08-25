@@ -193,15 +193,16 @@ font-size: 0.85rem;
 font-weight: 700;
 }
 
-/* Dedicated animated paint preview section at the bottom of results panel */
+/* Dedicated animated painting preview box positioned cleanly at the bottom */
 .animated-paint-box {
 width: 100%;
-height: 90px;
-border-radius: 8px;
+height: 160px;
+border-radius: 10px;
 overflow: hidden;
 position: relative;
-border: 1px solid #93c5fd;
-box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+border: 2px solid #93c5fd;
+box-shadow: 0 4px 12px rgba(3, 105, 161, 0.15);
+margin-top: 0.5rem;
 }
 .animated-bg {
 position: absolute;
@@ -210,10 +211,10 @@ left: 0;
 width: 100%;
 height: 100%;
 background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
-url('https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=800&q=80');
+url('https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=1000&q=80');
 background-size: cover;
 background-position: center;
-animation: slowPan 15s ease-in-out infinite alternate;
+animation: slowPan 10s ease-in-out infinite alternate;
 }
 @keyframes slowPan {
 0% { transform: scale(1) translate(0, 0); }
@@ -265,17 +266,17 @@ Live Engine Active
 
 <div class="row">
 <div class="form-group">
-<label for="length">Room Length <span class="unit-label">(ft)</span>:</label>
+<label for="length" id="lengthLabel">Room Length (ft):</label>
 <input type="number" id="length" value="14" min="0">
 </div>
 <div class="form-group">
-<label for="width">Room Width <span class="unit-label">(ft)</span>:</label>
+<label for="width" id="widthLabel">Room Width (ft):</label>
 <input type="number" id="width" value="12" min="0">
 </div>
 </div>
 
 <div class="form-group">
-<label for="height">Wall Height <span class="unit-label">(ft)</span>:</label>
+<label for="height" id="heightLabel">Wall Height (ft):</label>
 <input type="number" id="height" value="9" min="0">
 </div>
 
@@ -337,7 +338,7 @@ Live Engine Active
 </div>
 </div>
 
-<!-- Animated Painting Background Box -->
+<!-- Dedicated Animated Painting Preview Box at the Bottom -->
 <div class="animated-paint-box">
 <div class="animated-bg"></div>
 </div>
@@ -354,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // 1. Texture options click listener
 const textureOptions = document.querySelectorAll('.texture-option');
 textureOptions.forEach(option => {
-option.addEventListener('click', (e) => {
+option.addEventListener('click', () => {
 textureOptions.forEach(el => el.classList.remove('active'));
 option.classList.add('active');
 document.getElementById('texture').value = option.getAttribute('data-value');
@@ -362,15 +363,20 @@ calculatePaint();
 });
 });
 
-// 2. Unit dropdown change listener (fixes unit labels)
+// 2. Unit dropdown change listener & initializer
 const unitSelect = document.getElementById('unit');
+
+function updateUnitLabels() {
+const unit = unitSelect.value;
+const suffix = unit === 'feet' ? '(ft)' : '(m)';
+
+document.getElementById('lengthLabel').innerText = Room Length ${suffix}:; document.getElementById('widthLabel').innerText =Room Width ${suffix}:;
+document.getElementById('heightLabel').innerText = Wall Height ${suffix}:`;
+}
+
 if (unitSelect) {
 unitSelect.addEventListener('change', () => {
-const unit = unitSelect.value;
-const labelText = unit === 'feet' ? '(ft)' : '(m)';
-document.querySelectorAll('.unit-label').forEach(el => {
-el.innerText = labelText;
-});
+updateUnitLabels();
 calculatePaint();
 });
 }
@@ -382,6 +388,8 @@ input.addEventListener('input', calculatePaint);
 input.addEventListener('change', calculatePaint);
 });
 
+// Initial run
+updateUnitLabels();
 calculatePaint();
 });
 
@@ -418,8 +426,7 @@ let paintNeeded = unit === 'feet' ? (totalCoverageNeeded / 350) : (totalCoverage
 let unitLabel = unit === 'feet' ? "Gallons" : "Liters";
 let areaLabel = unit === 'feet' ? "sq ft" : "sq m";
 
-document.getElementById('paintAmount').innerText = ${paintNeeded.toFixed(2)} ${unitLabel};
-document.getElementById('paintDetails').innerText = Total Paintable Area: ${Math.round(totalCoverageNeeded)} ${areaLabel} | Coats: ${coats}; document.getElementById('wallFill').style.width = ``${Math.min((paintNeeded / 5) * 100, 100)}%;
+document.getElementById('paintAmount').innerText = ``${paintNeeded.toFixed(2)} {Math.round(totalCoverageNeeded)} {coats}; document.getElementById('wallFill').style.width =${Math.min((paintNeeded / 5) * 100, 100)}%;
 
 calculateCans(paintNeeded, unit);
 }
@@ -434,16 +441,14 @@ let remainder = amount - gallons;
 let quarts = Math.ceil(remainder * 4);
 if (quarts === 4) { gallons += 1; quarts = 0; }
 
-if (gallons > 0) html += <div class="can-badge"&gt;${gallons} Gallon Bucket${gallons &gt; 1 ? 's' : ''}&lt;/div>;
-if (quarts > 0) html += <div class="can-badge"&gt;${quarts} Quart Can${quarts &gt; 1 ? 's' : ''}&lt;/div>;
+if (gallons > 0) html += <div class="can-badge"&gt;${gallons} Gallon Bucket{quarts} Quart Can${quarts &gt; 1 ? 's' : ''}&lt;/div>;
 } else {
 let largeBuckets = Math.floor(amount / 5);
 let remainder = amount % 5;
 let smallCans = Math.ceil(remainder);
 if (smallCans === 5) { largeBuckets += 1; smallCans = 0; }
 
-if (largeBuckets > 0) html += <div class="can-badge"&gt;${largeBuckets} 5-Liter Bucket${largeBuckets &gt; 1 ? 's' : ''}&lt;/div>;
-if (smallCans > 0) html += <div class="can-badge"&gt;${smallCans} 1-Liter Can${smallCans &gt; 1 ? 's' : ''}&lt;/div>;
+if (largeBuckets > 0) html += <div class="can-badge"&gt;${largeBuckets} 5-Liter Bucket{smallCans} 1-Liter Can${smallCans > 1 ? 's' : ''}</div>`;
 }
 
 canList.innerHTML = html || <div class="can-badge"&gt;1 Quart Can&lt;/div>;
