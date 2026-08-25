@@ -193,7 +193,6 @@ font-size: 0.85rem;
 font-weight: 700;
 }
 
-/* Animated painting preview box */
 .animated-paint-box {
 width: 100%;
 height: 160px;
@@ -258,7 +257,7 @@ Live Engine Active
 <div class="card">
 <div class="form-group">
 <label for="unit">Unit System:</label>
-<select id="unit" onchange="switchUnits()">
+<select id="unit">
 <option value="feet">Imperial (Feet / Gallons)</option>
 <option value="meters">Metric (Meters / Liters)</option>
 </select>
@@ -266,48 +265,48 @@ Live Engine Active
 
 <div class="row">
 <div class="form-group">
-<label for="length"><span id="lblLength">Room Length</span> <span class="unit-tag">(ft)</span>:</label>
-<input type="number" id="length" value="14" min="0" oninput="calculatePaint()">
+<label for="length">Room Length <span class="unit-label">(ft)</span>:</label>
+<input type="number" id="length" value="14" step="0.1" min="0">
 </div>
 <div class="form-group">
-<label for="width"><span id="lblWidth">Room Width</span> <span class="unit-tag">(ft)</span>:</label>
-<input type="number" id="width" value="12" min="0" oninput="calculatePaint()">
+<label for="width">Room Width <span class="unit-label">(ft)</span>:</label>
+<input type="number" id="width" value="12" step="0.1" min="0">
 </div>
 </div>
 
 <div class="form-group">
-<label for="height"><span id="lblHeight">Wall Height</span> <span class="unit-tag">(ft)</span>:</label>
-<input type="number" id="height" value="9" min="0" oninput="calculatePaint()">
+<label for="height">Wall Height <span class="unit-label">(ft)</span>:</label>
+<input type="number" id="height" value="9" step="0.1" min="0">
 </div>
 
 <div class="form-group">
 <label for="coats">Number of Coats:</label>
-<input type="number" id="coats" value="2" min="1" oninput="calculatePaint()">
+<input type="number" id="coats" value="2" min="1">
 </div>
 
 <div class="row">
 <div class="form-group">
 <label for="doors">Number of Doors:</label>
-<input type="number" id="doors" value="1" min="0" oninput="calculatePaint()">
+<input type="number" id="doors" value="1" min="0">
 </div>
 <div class="form-group">
 <label for="windows">Number of Windows:</label>
-<input type="number" id="windows" value="2" min="0" oninput="calculatePaint()">
+<input type="number" id="windows" value="2" min="0">
 </div>
 </div>
 
 <div class="form-group">
 <label>Surface Texture:</label>
 <div class="texture-cards">
-<div class="texture-option active" data-value="1.0" onclick="setTexture(this, 1.0)">
+<div class="texture-option active" data-value="1.0">
 <strong>Smooth</strong>
 <span class="texture-desc">Standard drywall</span>
 </div>
-<div class="texture-option" data-value="1.15" onclick="setTexture(this, 1.15)">
+<div class="texture-option" data-value="1.15">
 <strong>Medium</strong>
 <span class="texture-desc">Orange peel (+15%)</span>
 </div>
-<div class="texture-option" data-value="1.30" onclick="setTexture(this, 1.30)">
+<div class="texture-option" data-value="1.30">
 <strong>Rough</strong>
 <span class="texture-desc">Stucco (+30%)</span>
 </div>
@@ -338,7 +337,6 @@ Live Engine Active
 </div>
 </div>
 
-<!-- Animated Painting Preview Box -->
 <div class="animated-paint-box">
 <div class="animated-bg"></div>
 </div>
@@ -351,35 +349,38 @@ Live Engine Active
 </footer>
 
 <script>
-function setTexture(element, val) {
-document.querySelectorAll('.texture-option').forEach(el => el.classList.remove('active'));
-element.classList.add('active');
-document.getElementById('texture').value = val;
-calculatePaint();
-}
+document.addEventListener('DOMContentLoaded', () => {
+let previousUnit = 'feet';
 
-function switchUnits() {
-const unit = document.getElementById('unit').value;
-const tag = unit === 'feet' ? '(ft)' : '(m)';
+const unitSelect = document.getElementById('unit');
+const lengthInput = document.getElementById('length');
+const widthInput = document.getElementById('width');
+const heightInput = document.getElementById('height');
+const coatsInput = document.getElementById('coats');
+const doorsInput = document.getElementById('doors');
+const windowsInput = document.getElementById('windows');
+const textureInput = document.getElementById('texture');
+const textureOptions = document.querySelectorAll('.texture-option');
 
-// Update all unit tag spans directly
-document.querySelectorAll('.unit-tag').forEach(el => {
-el.innerText = tag;
+// Texture selection handling
+textureOptions.forEach(option => {
+option.addEventListener('click', () => {
+textureOptions.forEach(el => el.classList.remove('active'));
+option.classList.add('active');
+textureInput.value = option.getAttribute('data-value');
+calculate();
+});
 });
 
-calculatePaint();
-}
-
-function calculatePaint() {
-const unit = document.getElementById('unit').value;
-
-const length = parseFloat(document.getElementById('length').value) || 0;
-const width = parseFloat(document.getElementById('width').value) || 0;
-const height = parseFloat(document.getElementById('height').value) || 0;
-const coats = parseInt(document.getElementById('coats').value) || 1;
-const doors = parseInt(document.getElementById('doors').value) || 0;
-const windows = parseInt(document.getElementById('windows').value) || 0;
-const textureMultiplier = parseFloat(document.getElementById('texture').value) || 1.0;
+function calculate() {
+const unit = unitSelect.value;
+const length = parseFloat(lengthInput.value) || 0;
+const width = parseFloat(widthInput.value) || 0;
+const height = parseFloat(heightInput.value) || 0;
+const coats = parseInt(coatsInput.value) || 1;
+const doors = parseInt(doorsInput.value) || 0;
+const windows = parseInt(windowsInput.value) || 0;
+const textureMultiplier = parseFloat(textureInput.value) || 1.0;
 
 if (length <= 0 || width <= 0 || height <= 0) {
 document.getElementById('paintAmount').innerText = "Estimate: --";
@@ -391,6 +392,8 @@ return;
 
 const perimeter = 2 * (length + width);
 let grossArea = perimeter * height;
+
+// Door and window area deductions based on unit system
 let doorArea = unit === 'feet' ? 21 : 2;
 let windowArea = unit === 'feet' ? 15 : 1.4;
 
@@ -432,6 +435,40 @@ if (smallCans > 0) html += <div class="can-badge"&gt;${smallCans} 1-Liter Can${s
 
 canList.innerHTML = html || <div class="can-badge"&gt;1 Quart Can&lt;/div>;
 }
+
+// Unit change event listener with automatic value conversion
+unitSelect.addEventListener('change', () => {
+const currentUnit = unitSelect.value;
+
+if (previousUnit === 'feet' && currentUnit === 'meters') {
+lengthInput.value = (parseFloat(lengthInput.value || 0) * 0.3048).toFixed(2);
+widthInput.value = (parseFloat(widthInput.value || 0) * 0.3048).toFixed(2);
+heightInput.value = (parseFloat(heightInput.value || 0) * 0.3048).toFixed(2);
+} else if (previousUnit === 'meters' && currentUnit === 'feet') {
+lengthInput.value = (parseFloat(lengthInput.value || 0) / 0.3048).toFixed(1);
+widthInput.value = (parseFloat(widthInput.value || 0) / 0.3048).toFixed(1);
+heightInput.value = (parseFloat(heightInput.value || 0) / 0.3048).toFixed(1);
+}
+
+previousUnit = currentUnit;
+
+const tag = currentUnit === 'feet' ? '(ft)' : '(m)';
+document.querySelectorAll('.unit-label').forEach(el => {
+el.innerText = tag;
+});
+
+calculate();
+});
+
+// Bind input events for all fields
+[lengthInput, widthInput, heightInput, coatsInput, doorsInput, windowsInput].forEach(input => {
+input.addEventListener('input', calculate);
+input.addEventListener('change', calculate);
+});
+
+// Initial calculation run
+calculate();
+});
 </script>
 </body>
 </html>
