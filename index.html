@@ -130,6 +130,7 @@ color: #0369a1;
 margin-bottom: 0.3rem;
 display: flex;
 justify-content: space-between;
+align-items: center;
 }
 .live-tag {
 font-size: 0.7rem;
@@ -170,6 +171,9 @@ border-radius: 10px;
 padding: 1rem;
 margin-bottom: 1.2rem;
 }
+.can-breakdown h3 { font-size: 0.9rem; color: #0369a1; margin-bottom: 0.2rem; }
+.breakdown-desc { font-size: 0.8rem; color: #64748b; margin-bottom: 0.6rem; }
+
 .can-list { display: flex; gap: 0.8rem; flex-wrap: wrap; }
 .can-badge {
 background: #e0f2fe;
@@ -212,7 +216,7 @@ Live Engine Active
 <div class="wrapper">
 <div class="page-title">
 <h1>Paint Calculator</h1>
-<p>Estimate the exact amount of paint and containers needed for your room.</p>
+<p>Estimate the exact amount of paint needed for your room.</p>
 </div>
 
 <div class="calculator-grid">
@@ -291,10 +295,11 @@ Live Engine Active
 </div>
 
 <div class="can-breakdown">
-<h3>Recommended Container Purchase</h3>
+<h3>Recommended Paint Purchase</h3>
+<p class="breakdown-desc">Optimized store quantities based on your paint volume.</p>
 <div class="can-list" id="canList">
-<div class="can-badge">2 x Gallon Cans</div>
-<div class="can-badge">1 x Quart Can</div>
+<div class="can-badge">2 Gallon Buckets</div>
+<div class="can-badge">1 Quart Can</div>
 </div>
 </div>
 </div>
@@ -307,7 +312,6 @@ Live Engine Active
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-// Texture selection logic
 const textureOptions = document.querySelectorAll('.texture-option');
 textureOptions.forEach(option => {
 option.addEventListener('click', () => {
@@ -318,7 +322,6 @@ calculatePaint();
 });
 });
 
-// Unit change listener
 document.getElementById('unit').addEventListener('change', () => {
 const unit = document.getElementById('unit').value;
 const labelText = unit === 'feet' ? '(ft)' : '(m)';
@@ -326,13 +329,11 @@ document.querySelectorAll('.unit-label').forEach(el => el.innerText = labelText)
 calculatePaint();
 });
 
-// Input listeners for real-time calculation
 const inputs = document.querySelectorAll('input[type="number"]');
 inputs.forEach(input => {
 input.addEventListener('input', calculatePaint);
 });
 
-// Initial calculation run
 calculatePaint();
 });
 
@@ -383,19 +384,19 @@ let remainder = amount - gallons;
 let quarts = Math.ceil(remainder * 4);
 if (quarts === 4) { gallons += 1; quarts = 0; }
 
-if (gallons > 0) html += <div class="can-badge"&gt;${gallons} x Gallon Bucket${gallons &gt; 1 ? 's' : ''}&lt;/div>;
-if (quarts > 0) html += <div class="can-badge"&gt;${quarts} x Quart Can${quarts &gt; 1 ? 's' : ''}&lt;/div>;
+if (gallons > 0) html += <div class="can-badge"&gt;${gallons} Gallon Bucket${gallons &gt; 1 ? 's' : ''}&lt;/div>;
+if (quarts > 0) html += <div class="can-badge"&gt;${quarts} Quart Can${quarts &gt; 1 ? 's' : ''}&lt;/div>;
 } else {
 let largeBuckets = Math.floor(amount / 5);
 let remainder = amount % 5;
 let smallCans = Math.ceil(remainder);
 if (smallCans === 5) { largeBuckets += 1; smallCans = 0; }
 
-if (largeBuckets > 0) html += <div class="can-badge"&gt;${largeBuckets} x 5-Liter Bucket${largeBuckets &gt; 1 ? 's' : ''}&lt;/div>;
-if (smallCans > 0) html += <div class="can-badge"&gt;${smallCans} x 1-Liter Can${smallCans &gt; 1 ? 's' : ''}&lt;/div>;
+if (largeBuckets > 0) html += <div class="can-badge"&gt;${largeBuckets} 5-Liter Bucket${largeBuckets &gt; 1 ? 's' : ''}&lt;/div>;
+if (smallCans > 0) html += <div class="can-badge"&gt;${smallCans} 1-Liter Can${smallCans &gt; 1 ? 's' : ''}&lt;/div>;
 }
 
-canList.innerHTML = html || <div class="can-badge"&gt;1 x Small Can&lt;/div>;
+canList.innerHTML = html || <div class="can-badge"&gt;1 Quart Can&lt;/div>;
 }
 </script>
 </body>
