@@ -202,22 +202,83 @@ position: relative;
 border: 2px solid #93c5fd;
 box-shadow: 0 4px 12px rgba(3, 105, 161, 0.15);
 margin-top: 0.5rem;
+background: #eef1f5;
 }
-.animated-bg {
+
+.wall-base {
+position: absolute;
+inset: 0;
+background-image: repeating-linear-gradient(135deg, #e2e8f0 0, #e2e8f0 12px, #eef1f5 12px, #eef1f5 24px);
+}
+
+.wall-painted {
 position: absolute;
 top: 0;
 left: 0;
-width: 100%;
 height: 100%;
-background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
-url('https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=1000&q=80');
-background-size: cover;
-background-position: center;
-animation: slowPan 10s ease-in-out infinite alternate;
+width: 0%;
+background: linear-gradient(135deg, #ff7a1a, #ffa15c);
+box-shadow: inset -6px 0 10px rgba(0,0,0,0.18);
+animation: paintSweep 5s ease-in-out infinite;
 }
-@keyframes slowPan {
-0% { transform: scale(1) translate(0, 0); }
-100% { transform: scale(1.1) translate(-2%, -2%); }
+.wall-painted::after {
+content: "";
+position: absolute;
+inset: 0;
+background-image: repeating-linear-gradient(100deg, rgba(255,255,255,0.16) 0, rgba(255,255,255,0.16) 3px, transparent 3px, transparent 14px);
+}
+
+.roller-wrap {
+position: absolute;
+top: 50%;
+left: -8%;
+transform: translate(-50%, -50%);
+animation: rollerMove 5s ease-in-out infinite;
+z-index: 2;
+}
+.roller-bob {
+animation: rollerBob 0.35s ease-in-out infinite alternate;
+}
+
+.paint-drip {
+position: absolute;
+top: 62%;
+width: 5px;
+height: 5px;
+border-radius: 50%;
+background: #ff8f3d;
+animation: dripFall 5s ease-in infinite;
+opacity: 0;
+z-index: 1;
+}
+.paint-drip.d2 { animation-delay: 0.35s; }
+.paint-drip.d3 { animation-delay: 0.7s; }
+
+@keyframes paintSweep {
+0%   { width: 0%;   opacity: 1; }
+70%  { width: 100%; opacity: 1; }
+85%  { width: 100%; opacity: 1; }
+92%  { width: 100%; opacity: 0; }
+93%  { width: 0%;   opacity: 0; }
+100% { width: 0%;   opacity: 1; }
+}
+@keyframes rollerMove {
+0%   { left: -8%;  opacity: 1; }
+70%  { left: 104%; opacity: 1; }
+85%  { left: 104%; opacity: 1; }
+92%  { left: 104%; opacity: 0; }
+93%  { left: -8%;  opacity: 0; }
+100% { left: -8%;  opacity: 1; }
+}
+@keyframes rollerBob {
+0%   { transform: translateY(0); }
+100% { transform: translateY(3px); }
+}
+@keyframes dripFall {
+0%, 68%   { opacity: 0; transform: translateY(0); }
+72%       { opacity: 0.9; transform: translateY(0); }
+84%       { opacity: 0.9; transform: translateY(22px); }
+90%, 100% { opacity: 0; transform: translateY(26px); }
 }
 
 footer {
@@ -338,14 +399,28 @@ Live Engine Active
 </div>
 
 <div class="animated-paint-box">
-<div class="animated-bg"></div>
+<div class="wall-base"></div>
+<div class="wall-painted"></div>
+<div class="paint-drip" style="left: 8%;"></div>
+<div class="paint-drip d2" style="left: 30%;"></div>
+<div class="paint-drip d3" style="left: 52%;"></div>
+<div class="roller-wrap">
+<div class="roller-bob">
+<svg width="60" height="84" viewBox="0 0 100 140">
+<line x1="72" y1="128" x2="34" y2="34" stroke="#8b5e34" stroke-width="8" stroke-linecap="round"/>
+<line x1="34" y1="34" x2="55" y2="14" stroke="#94a3b8" stroke-width="5" stroke-linecap="round"/>
+<rect x="15" y="2" width="55" height="20" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" transform="rotate(-20 42 12)"/>
+<rect x="19" y="5" width="47" height="8" rx="4" fill="#ff8533" transform="rotate(-20 42 12)"/>
+</svg>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 
 <footer>
-<p>BuildCal Paint Estimator © 2026</p>
+<p>BuildCal Paint Estimator &copy; 2026</p>
 </footer>
 
 <script>
@@ -364,106 +439,107 @@ const textureOptions = document.querySelectorAll('.texture-option');
 
 // Texture selection handling
 textureOptions.forEach(option => {
-option.addEventListener('click', () => {
-textureOptions.forEach(el => el.classList.remove('active'));
-option.classList.add('active');
-textureInput.value = option.getAttribute('data-value');
-calculate();
-});
+  option.addEventListener('click', () => {
+    textureOptions.forEach(el => el.classList.remove('active'));
+    option.classList.add('active');
+    textureInput.value = option.getAttribute('data-value');
+    calculate();
+  });
 });
 
 function calculate() {
-const unit = unitSelect.value;
-const length = parseFloat(lengthInput.value) || 0;
-const width = parseFloat(widthInput.value) || 0;
-const height = parseFloat(heightInput.value) || 0;
-const coats = parseInt(coatsInput.value) || 1;
-const doors = parseInt(doorsInput.value) || 0;
-const windows = parseInt(windowsInput.value) || 0;
-const textureMultiplier = parseFloat(textureInput.value) || 1.0;
+  const unit = unitSelect.value;
+  const length = parseFloat(lengthInput.value) || 0;
+  const width = parseFloat(widthInput.value) || 0;
+  const height = parseFloat(heightInput.value) || 0;
+  const coats = parseInt(coatsInput.value) || 1;
+  const doors = parseInt(doorsInput.value) || 0;
+  const windows = parseInt(windowsInput.value) || 0;
+  const textureMultiplier = parseFloat(textureInput.value) || 1.0;
 
-if (length <= 0 || width <= 0 || height <= 0) {
-document.getElementById('paintAmount').innerText = "Estimate: --";
-document.getElementById('paintDetails').innerText = "Enter valid dimensions above.";
-document.getElementById('wallFill').style.width = "0%";
-document.getElementById('canList').innerHTML = <div class="can-badge"&gt;--&lt;/div>;
-return;
-}
+  if (length <= 0 || width <= 0 || height <= 0) {
+    document.getElementById('paintAmount').innerText = "Estimate: --";
+    document.getElementById('paintDetails').innerText = "Enter valid dimensions above.";
+    document.getElementById('wallFill').style.width = "0%";
+    document.getElementById('canList').innerHTML = '<div class="can-badge">--</div>';
+    return;
+  }
 
-const perimeter = 2 * (length + width);
-let grossArea = perimeter * height;
+  const perimeter = 2 * (length + width);
+  let grossArea = perimeter * height;
 
-// Door and window area deductions based on unit system
-let doorArea = unit === 'feet' ? 21 : 2;
-let windowArea = unit === 'feet' ? 15 : 1.4;
+  // Door and window area deductions based on unit system
+  let doorArea = unit === 'feet' ? 21 : 2;
+  let windowArea = unit === 'feet' ? 15 : 1.4;
 
-let netArea = grossArea - (doors * doorArea) - (windows * windowArea);
-if (netArea < 0) netArea = 0;
+  let netArea = grossArea - (doors * doorArea) - (windows * windowArea);
+  if (netArea < 0) netArea = 0;
 
-let totalCoverageNeeded = netArea * coats * textureMultiplier;
-let paintNeeded = unit === 'feet' ? (totalCoverageNeeded / 350) : (totalCoverageNeeded / 10);
-let unitLabel = unit === 'feet' ? "Gallons" : "Liters";
-let areaLabel = unit === 'feet' ? "sq ft" : "sq m";
+  let totalCoverageNeeded = netArea * coats * textureMultiplier;
+  let paintNeeded = unit === 'feet' ? (totalCoverageNeeded / 350) : (totalCoverageNeeded / 10);
+  let unitLabel = unit === 'feet' ? "Gallons" : "Liters";
+  let areaLabel = unit === 'feet' ? "sq ft" : "sq m";
 
-document.getElementById('paintAmount').innerText = ${paintNeeded.toFixed(2)} ${unitLabel};
-document.getElementById('paintDetails').innerText = Total Paintable Area: ${Math.round(totalCoverageNeeded)} ${areaLabel} | Coats: ${coats}; document.getElementById('wallFill').style.width = ``${Math.min((paintNeeded / 5) * 100, 100)}%;
+  document.getElementById('paintAmount').innerText = `${paintNeeded.toFixed(2)} ${unitLabel}`;
+  document.getElementById('paintDetails').innerText = `Total Paintable Area: ${Math.round(totalCoverageNeeded)} ${areaLabel} | Coats: ${coats}`;
+  document.getElementById('wallFill').style.width = `${Math.min((paintNeeded / 5) * 100, 100)}%`;
 
-calculateCans(paintNeeded, unit);
+  calculateCans(paintNeeded, unit);
 }
 
 function calculateCans(amount, unit) {
-const canList = document.getElementById('canList');
-let html = '';
+  const canList = document.getElementById('canList');
+  let html = '';
 
-if (unit === 'feet') {
-let gallons = Math.floor(amount);
-let remainder = amount - gallons;
-let quarts = Math.ceil(remainder * 4);
-if (quarts === 4) { gallons += 1; quarts = 0; }
+  if (unit === 'feet') {
+    let gallons = Math.floor(amount);
+    let remainder = amount - gallons;
+    let quarts = Math.ceil(remainder * 4);
+    if (quarts === 4) { gallons += 1; quarts = 0; }
 
-if (gallons > 0) html += <div class="can-badge"&gt;${gallons} Gallon Bucket${gallons &gt; 1 ? 's' : ''}&lt;/div>;
-if (quarts > 0) html += <div class="can-badge"&gt;${quarts} Quart Can${quarts &gt; 1 ? 's' : ''}&lt;/div>;
-} else {
-let largeBuckets = Math.floor(amount / 5);
-let remainder = amount % 5;
-let smallCans = Math.ceil(remainder);
-if (smallCans === 5) { largeBuckets += 1; smallCans = 0; }
+    if (gallons > 0) html += `<div class="can-badge">${gallons} Gallon Bucket${gallons > 1 ? 's' : ''}</div>`;
+    if (quarts > 0) html += `<div class="can-badge">${quarts} Quart Can${quarts > 1 ? 's' : ''}</div>`;
+  } else {
+    let largeBuckets = Math.floor(amount / 5);
+    let remainder = amount % 5;
+    let smallCans = Math.ceil(remainder);
+    if (smallCans === 5) { largeBuckets += 1; smallCans = 0; }
 
-if (largeBuckets > 0) html += <div class="can-badge"&gt;${largeBuckets} 5-Liter Bucket${largeBuckets &gt; 1 ? 's' : ''}&lt;/div>;
-if (smallCans > 0) html += <div class="can-badge"&gt;${smallCans} 1-Liter Can${smallCans &gt; 1 ? 's' : ''}&lt;/div>;
-}
+    if (largeBuckets > 0) html += `<div class="can-badge">${largeBuckets} 5-Liter Bucket${largeBuckets > 1 ? 's' : ''}</div>`;
+    if (smallCans > 0) html += `<div class="can-badge">${smallCans} 1-Liter Can${smallCans > 1 ? 's' : ''}</div>`;
+  }
 
-canList.innerHTML = html || <div class="can-badge"&gt;1 Quart Can&lt;/div>;
+  canList.innerHTML = html || '<div class="can-badge">1 Quart Can</div>';
 }
 
 // Unit change event listener with automatic value conversion
 unitSelect.addEventListener('change', () => {
-const currentUnit = unitSelect.value;
+  const currentUnit = unitSelect.value;
 
-if (previousUnit === 'feet' && currentUnit === 'meters') {
-lengthInput.value = (parseFloat(lengthInput.value || 0) * 0.3048).toFixed(2);
-widthInput.value = (parseFloat(widthInput.value || 0) * 0.3048).toFixed(2);
-heightInput.value = (parseFloat(heightInput.value || 0) * 0.3048).toFixed(2);
-} else if (previousUnit === 'meters' && currentUnit === 'feet') {
-lengthInput.value = (parseFloat(lengthInput.value || 0) / 0.3048).toFixed(1);
-widthInput.value = (parseFloat(widthInput.value || 0) / 0.3048).toFixed(1);
-heightInput.value = (parseFloat(heightInput.value || 0) / 0.3048).toFixed(1);
-}
+  if (previousUnit === 'feet' && currentUnit === 'meters') {
+    lengthInput.value = (parseFloat(lengthInput.value || 0) * 0.3048).toFixed(2);
+    widthInput.value = (parseFloat(widthInput.value || 0) * 0.3048).toFixed(2);
+    heightInput.value = (parseFloat(heightInput.value || 0) * 0.3048).toFixed(2);
+  } else if (previousUnit === 'meters' && currentUnit === 'feet') {
+    lengthInput.value = (parseFloat(lengthInput.value || 0) / 0.3048).toFixed(1);
+    widthInput.value = (parseFloat(widthInput.value || 0) / 0.3048).toFixed(1);
+    heightInput.value = (parseFloat(heightInput.value || 0) / 0.3048).toFixed(1);
+  }
 
-previousUnit = currentUnit;
+  previousUnit = currentUnit;
 
-const tag = currentUnit === 'feet' ? '(ft)' : '(m)';
-document.querySelectorAll('.unit-label').forEach(el => {
-el.innerText = tag;
-});
+  const tag = currentUnit === 'feet' ? '(ft)' : '(m)';
+  document.querySelectorAll('.unit-label').forEach(el => {
+    el.innerText = tag;
+  });
 
-calculate();
+  calculate();
 });
 
 // Bind input events for all fields
 [lengthInput, widthInput, heightInput, coatsInput, doorsInput, windowsInput].forEach(input => {
-input.addEventListener('input', calculate);
-input.addEventListener('change', calculate);
+  input.addEventListener('input', calculate);
+  input.addEventListener('change', calculate);
 });
 
 // Initial calculation run
