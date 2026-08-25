@@ -341,6 +341,11 @@ Live Engine Active
 </div>
 
 <div class="form-group">
+<label for="wallThickness">Wall Thickness <span class="unit-label">(ft)</span>:</label>
+<input type="number" id="wallThickness" value="0.5" step="0.05" min="0">
+</div>
+
+<div class="form-group">
 <label for="coats">Number of Coats:</label>
 <input type="number" id="coats" value="2" min="1">
 </div>
@@ -357,194 +362,36 @@ Live Engine Active
 </div>
 
 <div class="form-group">
-<label>Surface Texture:</label>
-<div class="texture-cards">
-<div class="texture-option active" data-value="1.0">
-<strong>Smooth</strong>
-<span class="texture-desc">Standard drywall</span>
+<label>Door Size (each) <span class="unit-label">(ft)</span>:</label>
+<div class="row">
+<div class="form-group">
+<label style="font-weight:400; font-size:0.75rem;">Width</label>
+<input type="number" id="doorWidth" value="3" step="0.05" min="0" aria-label="Door width">
 </div>
-<div class="texture-option" data-value="1.15">
-<strong>Medium</strong>
-<span class="texture-desc">Orange peel (+15%)</span>
+<div class="form-group">
+<label style="font-weight:400; font-size:0.75rem;">Height (Length)</label>
+<input type="number" id="doorHeight" value="7" step="0.05" min="0" aria-label="Door height">
 </div>
-<div class="texture-option" data-value="1.30">
-<strong>Rough</strong>
-<span class="texture-desc">Stucco (+30%)</span>
-</div>
-</div>
-<input type="hidden" id="texture" value="1.0">
-</div>
-</div>
-
-<div class="results-panel">
-<h2>
-<span>Live Estimate</span>
-<span class="live-tag">Auto-updating</span>
-</h2>
-
-<div class="estimate-value" id="paintAmount">2.15 Gallons</div>
-<div class="estimate-details" id="paintDetails">Total Paintable Area: 432 sq ft | Coats: 2</div>
-
-<div class="wall-preview">
-<div class="wall-fill" id="wallFill"></div>
-</div>
-
-<div class="can-breakdown">
-<h3>Recommended Paint Purchase</h3>
-<p class="breakdown-desc">Optimized store quantities based on your paint volume.</p>
-<div class="can-list" id="canList">
-<div class="can-badge">2 Gallon Buckets</div>
-<div class="can-badge">1 Quart Can</div>
-</div>
-</div>
-
-<div class="animated-paint-box">
-<div class="wall-base"></div>
-<div class="wall-painted"></div>
-<div class="paint-drip" style="left: 8%;"></div>
-<div class="paint-drip d2" style="left: 30%;"></div>
-<div class="paint-drip d3" style="left: 52%;"></div>
-<div class="roller-wrap">
-<div class="roller-bob">
-<svg width="60" height="84" viewBox="0 0 100 140">
-<line x1="72" y1="128" x2="34" y2="34" stroke="#8b5e34" stroke-width="8" stroke-linecap="round"/>
-<line x1="34" y1="34" x2="55" y2="14" stroke="#94a3b8" stroke-width="5" stroke-linecap="round"/>
-<rect x="15" y="2" width="55" height="20" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" transform="rotate(-20 42 12)"/>
-<rect x="19" y="5" width="47" height="8" rx="4" fill="#ff8533" transform="rotate(-20 42 12)"/>
-</svg>
-</div>
-</div>
-</div>
+<div class="form-group">
+<label style="font-weight:400; font-size:0.75rem;">Frame Thickness</label>
+<input type="number" id="doorFrame" value="0.25" step="0.05" min="0" aria-label="Door frame thickness">
 </div>
 </div>
 </div>
 
-<footer>
-<p>BuildCal Paint Estimator &copy; 2026</p>
-</footer>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-let previousUnit = 'feet';
-
-const unitSelect = document.getElementById('unit');
-const lengthInput = document.getElementById('length');
-const widthInput = document.getElementById('width');
-const heightInput = document.getElementById('height');
-const coatsInput = document.getElementById('coats');
-const doorsInput = document.getElementById('doors');
-const windowsInput = document.getElementById('windows');
-const textureInput = document.getElementById('texture');
-const textureOptions = document.querySelectorAll('.texture-option');
-
-// Texture selection handling
-textureOptions.forEach(option => {
-  option.addEventListener('click', () => {
-    textureOptions.forEach(el => el.classList.remove('active'));
-    option.classList.add('active');
-    textureInput.value = option.getAttribute('data-value');
-    calculate();
-  });
-});
-
-function calculate() {
-  const unit = unitSelect.value;
-  const length = parseFloat(lengthInput.value) || 0;
-  const width = parseFloat(widthInput.value) || 0;
-  const height = parseFloat(heightInput.value) || 0;
-  const coats = parseInt(coatsInput.value) || 1;
-  const doors = parseInt(doorsInput.value) || 0;
-  const windows = parseInt(windowsInput.value) || 0;
-  const textureMultiplier = parseFloat(textureInput.value) || 1.0;
-
-  if (length <= 0 || width <= 0 || height <= 0) {
-    document.getElementById('paintAmount').innerText = "Estimate: --";
-    document.getElementById('paintDetails').innerText = "Enter valid dimensions above.";
-    document.getElementById('wallFill').style.width = "0%";
-    document.getElementById('canList').innerHTML = '<div class="can-badge">--</div>';
-    return;
-  }
-
-  const perimeter = 2 * (length + width);
-  let grossArea = perimeter * height;
-
-  // Door and window area deductions based on unit system
-  let doorArea = unit === 'feet' ? 21 : 2;
-  let windowArea = unit === 'feet' ? 15 : 1.4;
-
-  let netArea = grossArea - (doors * doorArea) - (windows * windowArea);
-  if (netArea < 0) netArea = 0;
-
-  let totalCoverageNeeded = netArea * coats * textureMultiplier;
-  let paintNeeded = unit === 'feet' ? (totalCoverageNeeded / 350) : (totalCoverageNeeded / 10);
-  let unitLabel = unit === 'feet' ? "Gallons" : "Liters";
-  let areaLabel = unit === 'feet' ? "sq ft" : "sq m";
-
-  document.getElementById('paintAmount').innerText = `${paintNeeded.toFixed(2)} ${unitLabel}`;
-  document.getElementById('paintDetails').innerText = `Total Paintable Area: ${Math.round(totalCoverageNeeded)} ${areaLabel} | Coats: ${coats}`;
-  document.getElementById('wallFill').style.width = `${Math.min((paintNeeded / 5) * 100, 100)}%`;
-
-  calculateCans(paintNeeded, unit);
-}
-
-function calculateCans(amount, unit) {
-  const canList = document.getElementById('canList');
-  let html = '';
-
-  if (unit === 'feet') {
-    let gallons = Math.floor(amount);
-    let remainder = amount - gallons;
-    let quarts = Math.ceil(remainder * 4);
-    if (quarts === 4) { gallons += 1; quarts = 0; }
-
-    if (gallons > 0) html += `<div class="can-badge">${gallons} Gallon Bucket${gallons > 1 ? 's' : ''}</div>`;
-    if (quarts > 0) html += `<div class="can-badge">${quarts} Quart Can${quarts > 1 ? 's' : ''}</div>`;
-  } else {
-    let largeBuckets = Math.floor(amount / 5);
-    let remainder = amount % 5;
-    let smallCans = Math.ceil(remainder);
-    if (smallCans === 5) { largeBuckets += 1; smallCans = 0; }
-
-    if (largeBuckets > 0) html += `<div class="can-badge">${largeBuckets} 5-Liter Bucket${largeBuckets > 1 ? 's' : ''}</div>`;
-    if (smallCans > 0) html += `<div class="can-badge">${smallCans} 1-Liter Can${smallCans > 1 ? 's' : ''}</div>`;
-  }
-
-  canList.innerHTML = html || '<div class="can-badge">1 Quart Can</div>';
-}
-
-// Unit change event listener with automatic value conversion
-unitSelect.addEventListener('change', () => {
-  const currentUnit = unitSelect.value;
-
-  if (previousUnit === 'feet' && currentUnit === 'meters') {
-    lengthInput.value = (parseFloat(lengthInput.value || 0) * 0.3048).toFixed(2);
-    widthInput.value = (parseFloat(widthInput.value || 0) * 0.3048).toFixed(2);
-    heightInput.value = (parseFloat(heightInput.value || 0) * 0.3048).toFixed(2);
-  } else if (previousUnit === 'meters' && currentUnit === 'feet') {
-    lengthInput.value = (parseFloat(lengthInput.value || 0) / 0.3048).toFixed(1);
-    widthInput.value = (parseFloat(widthInput.value || 0) / 0.3048).toFixed(1);
-    heightInput.value = (parseFloat(heightInput.value || 0) / 0.3048).toFixed(1);
-  }
-
-  previousUnit = currentUnit;
-
-  const tag = currentUnit === 'feet' ? '(ft)' : '(m)';
-  document.querySelectorAll('.unit-label').forEach(el => {
-    el.innerText = tag;
-  });
-
-  calculate();
-});
-
-// Bind input events for all fields
-[lengthInput, widthInput, heightInput, coatsInput, doorsInput, windowsInput].forEach(input => {
-  input.addEventListener('input', calculate);
-  input.addEventListener('change', calculate);
-});
-
-// Initial calculation run
-calculate();
-});
-</script>
-</body>
-</html>
+<div class="form-group">
+<label>Window Size (each) <span class="unit-label">(ft)</span>:</label>
+<div class="row">
+<div class="form-group">
+<label style="font-weight:400; font-size:0.75rem;">Width</label>
+<input type="number" id="windowWidth" value="3" step="0.05" min="0" aria-label="Window width">
+</div>
+<div class="form-group">
+<label style="font-weight:400; font-size:0.75rem;">Height (Length)</label>
+<input type="number" id="windowHeight" value="5" step="0.05" min="0" aria-label="Window height">
+</div>
+</div>
+<div class="row">
+<div class="form-group">
+<label style="font-weight:400; font-size:0.75rem;">Frame Thickness</label>
+<input type="number"
